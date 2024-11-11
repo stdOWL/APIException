@@ -1,6 +1,6 @@
 # APIException
 
-**APIException** is a customizable exception handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs.
+**APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs.
 
 ## Installation
 
@@ -176,8 +176,13 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 	3.	Make your changes and ensure all tests pass.
 	4.	Submit a pull request with a detailed description of the changes.
 
+## Why Use APIException?
+
+If you’re looking for a way to manage exception handling in a structured manner, especially if you want the backend to control the error messages displayed to end-users, then APIException is a great library for you. It provides an organized and extensible approach to managing error codes, messages, and descriptions directly from the backend, enhancing the overall API response consistency and user experience.
+
 ## License
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+If you like this library and find it useful, don’t forget to give it a ⭐ on GitHub!
 
 ## Contact
 If you have any questions or suggestions, please feel free to reach out at [ahmetkutayural.dev](https://ahmetkutayural.dev/#contact)
