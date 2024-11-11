@@ -1,7 +1,8 @@
 # APIException
 
 **APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs.
-[**View on PyPI**](https://pypi.org/project/APIException/0.1.0/)
+
+[**View on PyPI**](https://pypi.org/project/APIException)
 
 ## Installation
 
