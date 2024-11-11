@@ -1,4 +1,4 @@
-# APIException
+# APIException for FastAPI
 
 **APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs.
 
