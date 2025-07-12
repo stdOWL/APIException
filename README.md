@@ -11,7 +11,7 @@
 To install APIException, run:
 
 ```bash
-pip install APIException==0.1.5
+pip install APIException==0.1.8
 ```
 
 ## Features
@@ -228,7 +228,7 @@ python -m unittest discover -s tests
 
 ## Changelog
 
-### v0.1.7
+### v0.1.8 (2025-13-07)
 - Added CLI entrypoint (`api_exception-info`)
 - Improved README structure and examples
 - Stable test suite with FastAPI `TestClient`

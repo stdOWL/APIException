@@ -2,7 +2,7 @@ import click
 
 @click.command()
 def main():
-    click.secho("✨ APIException v0.1.5 Installed ✨", fg="green")
+    click.secho("✨ APIException current max version v0.1.8 Installed ✨", fg="green")
     click.secho("📚 PyPI: https://pypi.org/project/APIException/", fg="blue")
     click.secho("💻 GitHub: https://github.com/akutayural/APIException", fg="cyan")
     click.secho("👤 Maintainer: Ahmet Kutay URAL", fg="yellow")
