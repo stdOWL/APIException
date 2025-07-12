@@ -1,5 +1,5 @@
 # APIException for FastAPI
-[![PyPI version](https://img.shields.io/pypi/v/APIException)](https://pypi.org/project/APIException/)
+[![PyPI version](https://img.shields.io/pypi/v/APIException?cacheSeconds=60)](https://pypi.org/project/APIException/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs. This library is particularly suitable if you want to have control over the exceptions managed by the backend, ensuring a uniform response structure across your FastAPI endpoints.
@@ -11,7 +11,7 @@
 To install APIException, run:
 
 ```bash
-pip install APIException==0.1.9
+pip install APIException==0.1.10
 ```
 
 ## Features
@@ -228,7 +228,7 @@ python -m unittest discover -s tests
 
 ## Changelog
 
-### v0.1.8 (2025-13-07)
+### v0.1.10 (2025-13-07)
 - Added CLI entrypoint (`api_exception-info`)
 - Improved README structure and examples
 - Stable test suite with FastAPI `TestClient`
