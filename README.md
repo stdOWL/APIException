@@ -1,4 +1,5 @@
 # APIException for FastAPI
+[![PyPI version](https://badge.fury.io/py/APIException.svg)](https://badge.fury.io/py/APIException)
 
 **APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs. This library is particularly suitable if you want to have control over the exceptions managed by the backend, ensuring a uniform response structure across your FastAPI endpoints.
 
@@ -9,7 +10,7 @@
 To install APIException, run:
 
 ```bash
-pip install APIException
+pip install APIException==0.1.5
 ```
 
 ## Features
@@ -19,11 +20,17 @@ pip install APIException
 
 - **Standardized Error Handling**: APIException allows you to define a consistent format for error responses, making your API more predictable and easier to work with.
 
-- **Customizable Error Codes and Messages**: Define custom error codes with specific messages and descriptions, making it easy to differentiate between various errors in your application.
+- **Customizable Codes & Statuses**: Extend BaseExceptionCode to define your own custom error codes. Override default HTTP status codes anytime with set_default_http_codes.
+
+- **Response Model Consistency**: Use ResponseModel for both success and error responses to keep the same structure across your whole app.
 
 - **HTTP Status Integration**: Set HTTP status codes alongside error messages, ensuring that API clients receive appropriate responses for different types of errors (e.g., 400 for client errors, 500 for server errors).
 
-- **Automatic Logging**: Each exception raised includes automatic logging of details, such as the filename and line number, to help developers quickly locate issues.
+- **Automatic Logging**: Every APIException automatically logs the file, line number, the path, code, message, and description.
+
+- **Multiple Apps**: You can register the same handler for multiple apps (mobile_app, admin_app, merchant_app).
+
+- **Flexible Output**: Return raw dicts or Pydantic models — it’s up to you.
 
 - **Extensible Error Codes**: Extend the `ExceptionCode` class to add custom error codes unique to your application’s needs.
 
@@ -31,9 +38,114 @@ pip install APIException
 
 - **Descriptive Responses**: Provides detailed descriptions for errors, making it easier for developers and users to understand the context of an error.
 
-- **Response Model Integration**: APIException includes a Pydantic `ResponseModel` for structuring successful responses, and maintaining consistency across both successful and error responses.
 
-## Usage
+## Quickstart
+### 1) Register the Handler
+```bash
+from api_exception import register_exception_handlers
+
+register_exception_handlers(app)  # uses ResponseModel by default
+```
+Use raw dict instead:
+```bash
+register_exception_handlers(app, use_response_model=False)
+```
+### 2) Raise an APIException
+```python
+from api_exception import APIException, ExceptionCode, register_exception_handlers, ResponseModel
+from fastapi import FastAPI
+
+app = FastAPI()
+register_exception_handlers(app) 
+
+@app.get("/login")
+async def login(username: str, password: str):
+    if username != "admin" or password != "admin":
+        raise APIException(
+            error_code=ExceptionCode.AUTH_LOGIN_FAILED,
+            http_status_code=401
+        )
+    return ResponseModel(data={"username": username})
+```
+Simple as that! Now, if the login fails, the APIException will be raised, and the global exception handler will return a standardized error response. Also, the exception will be logged automatically with details about where it was raised.
+### 3) Success Response with ResponseModel
+```python
+from api_exception import ResponseModel
+
+@app.get("/success")
+async def success():
+    return ResponseModel(
+        data={"foo": "bar"},
+        message="Everything went fine!"
+    )
+```
+
+### 4) Custom Error Codes
+Always extend BaseExceptionCode — don’t subclass ExceptionCode!
+```python
+from api_exception import BaseExceptionCode
+
+class CustomExceptionCode(BaseExceptionCode):
+    USER_NOT_FOUND = ("USR-404", "User not found.", "User does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Key missing or invalid.")
+```
+Use it:
+```python
+from api_exception import APIException, ExceptionCode, register_exception_handlers, ResponseModel
+from fastapi import FastAPI
+
+app = FastAPI()
+register_exception_handlers(app) 
+@app.get("/user/{user_id}")
+async def get_user(user_id: int):
+    if user_id != 1:
+        raise APIException(
+            error_code=ExceptionCode.USER_NOT_FOUND,
+            http_status_code=404
+        )
+    return ResponseModel(data={"user_id": user_id})
+```
+
+## 5) Override Default HTTP Status Codes
+
+
+```python
+from api_exception import set_default_http_codes
+
+set_default_http_codes({
+    "FAIL": 422,
+    "WARNING": 202
+})
+```
+
+## 6) Multiple Apps? No Problem
+```python
+from fastapi import FastAPI
+from api_exception import register_exception_handlers
+mobile_app = FastAPI()
+admin_app = FastAPI()
+merchant_app = FastAPI()
+register_exception_handlers(mobile_app)
+register_exception_handlers(admin_app)
+register_exception_handlers(merchant_app)
+```
+
+## 7) Automatic Logging
+
+Each APIException automatically logs:
+
+	•	File name and line number.
+	•	Error code, status, message, description.
+
+Use the built-in logger for your own logs too:
+```python
+from api_exception import logger
+
+logger.info("Custom info log")
+logger.error("Custom error log")
+```
+
+# Installation
 
 ### Step 1: Install the Package
 
@@ -46,139 +158,25 @@ pip install APIException
 The following example demonstrates how to use APIException in a FastAPI endpoint.
 
 ```python
-from fastapi import FastAPI, HTTPException
-from api_exception.exception import APIException
-from custom_enum.enums import ExceptionCode, ExceptionStatus
-from schemas.response_model import ResponseModel
+from api_exception import APIException, ExceptionCode, register_exception_handlers, ResponseModel
+from fastapi import FastAPI
 
 app = FastAPI()
+register_exception_handlers(app) 
 
 @app.get("/login")
 async def login(username: str, password: str):
-    # Simulate a login failure scenario
     if username != "admin" or password != "admin":
-        # Raise an APIException for login failure
         raise APIException(
             error_code=ExceptionCode.AUTH_LOGIN_FAILED,
-            http_status_code=401
+            http_status_code=401,
+            message="Invalid credentials provided.",
+            description="The provided username or password is incorrect. Please try again.",
         )
-    # If login succeeds, return a success response
     return ResponseModel(data={"username": username})
 ```
 
-### Extending Exception Codes with Custom Error Codes
-If you need custom error codes specific to your application, simply extend the BaseExceptionCode to create a new class. For example, you can create a CustomExceptionCode class to define your custom errors:
-```python
-from custom_enum.enums import BaseExceptionCode
 
-class CustomExceptionCode(BaseExceptionCode):
-    USER_NOT_FOUND = ("USR-404", "User not found.", "The specified user does not exist in the system.")
-    INVALID_API_KEY = ("API-401", "Invalid API key provided.", "Please provide a valid API key.")
-```
-You can then use this custom error code in an APIException as follows:
-```python
-@app.get("/user/{user_id}")
-async def get_user(user_id: int):
-    if user_id != 1:  # Assume only user with ID 1 exists
-        raise APIException(
-            error_code=CustomExceptionCode.USER_NOT_FOUND,
-            http_status_code=404
-        )
-    return ResponseModel(data={"user_id": user_id, "name": "John Doe"})
-```
-
-### Setting Up a Global Exception Handler
-You can set up a global exception handler in FastAPI to handle all APIException instances, ensuring consistent error responses across endpoints. Use the @app.exception_handler(APIException) annotation to configure this handler.
-```python
-from fastapi.responses import JSONResponse
-from fastapi import Request
-
-@app.exception_handler(APIException)
-async def api_exception_handler(request: Request, exc: APIException):
-    return JSONResponse(
-        status_code=exc.http_status_code,
-        content=exc.to_response()
-    )
-```
-
-### Customizing the APIException
-You can customize the exception message, HTTP status code, and other details when raising an APIException.
-```python
-@app.get("/custom-error")
-async def custom_error():
-    # Example of a custom error with a custom message and description
-    raise APIException(
-        error_code=ExceptionCode.AUTH_LOGIN_FAILED,
-        message="Custom error message.",
-        description="Detailed description of the custom error.",
-        http_status_code=403,
-        status=ExceptionStatus.WARNING
-    )
-```
-
-### Customizing the Exception Codes
-To define custom error codes for specific needs in your application, extend the ExceptionCode class:
-```python
-from custom_enum.enums import BaseExceptionCode
-
-class CustomExceptionCode(BaseExceptionCode):
-    USER_NOT_FOUND = ("USR-404", "User not found.", "The specified user does not exist in the system.")
-    INVALID_API_KEY = ("API-401", "Invalid API key provided.", "Please provide a valid API key.")
-
-
-# Use the custom error code in an APIException
-@app.get("/user/{user_id}")
-async def get_user(user_id: int):
-    # Simulate a scenario where the user is not found
-    if user_id != 1:  # Assume only user with ID 1 exists
-        raise APIException(
-            error_code=CustomExceptionCode.USER_NOT_FOUND,
-            http_status_code=404
-        )
-    return ResponseModel(data={"user_id": user_id, "name": "John Doe"})
-```
-
-### Response Model for Successful Responses
-You can use ResponseModel for consistent structure in successful responses.
-```python
-@app.get("/success")
-async def success():
-    return ResponseModel(
-        data={"message": "Operation was successful"},
-        status=ExceptionStatus.SUCCESS,
-        message="Success message"
-    )
-```
-
-### Example: Customizing HTTP Status Codes
-Edit the http_status_codes dictionary to set custom status codes:
-```python
-http_status_codes = {
-    ExceptionStatus.SUCCESS: 200,
-    ExceptionStatus.WARNING: 202,
-    ExceptionStatus.FAIL: 500,
-}
-```
-
-
-### Automatically Logging Exceptions
-
-Each APIException raised automatically logs the exception details, including the location where the exception was raised. This is useful for debugging and monitoring your application.
-
-### Handling Exceptions in FastAPI
-To handle exceptions globally in FastAPI, you can use exception handlers.
-```python
-from fastapi.responses import JSONResponse
-from fastapi import Request
-
-@app.exception_handler(APIException)
-async def api_exception_handler(request: Request, exc: APIException):
-    return JSONResponse(
-        status_code=exc.http_status_code,
-        content=exc.to_response()
-    )
-```
-Now, any APIException raised in your application will be handled by this global exception handler, providing a consistent error format for all endpoints.
 
 ## Testing the APIException Library
 You can test the library by writing unit tests. Here’s an example of how you might structure tests for the APIException library.
@@ -220,6 +218,23 @@ if __name__ == "__main__":
     unittest.main()
 ```
 This test case verifies that the APIException class behaves as expected, including proper response formatting and attribute assignments.
+### Run the Tests
+To run the tests, you can use the following command in your terminal:
+
+```bash
+python -m unittest discover -s tests
+```
+
+## Changelog
+
+### v0.1.5
+- Added CLI entrypoint (`api_exception-info`)
+- Improved README structure and examples
+- Stable test suite with FastAPI `TestClient`
+- Multiple apps support, raw or ResponseModel output
+- Register Exception Handlers by calling `register_exception_handlers(app)` in your FastAPI app
+- Automatic logging of APIException details
+- __all__ has been updated to include all public classes and functions
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue to improve this library. Follow the guidelines below:
@@ -239,6 +254,5 @@ If you like this library and find it useful, don’t forget to give it a ⭐ on 
 
 ## Contact
 If you have any questions or suggestions, please feel free to reach out at [ahmetkutayural.dev](https://ahmetkutayural.dev/#contact)
-
 
 

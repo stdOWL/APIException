@@ -1,10 +1,9 @@
-import logging
 import traceback
 
+from .logger import logger
 from custom_enum.enums import ExceptionCode, ExceptionStatus
+from schemas.response_model import ResponseModel
 
-# Initialize the logger for this module
-logger = logging.getLogger(__name__)
 
 
 class APIException(Exception):
@@ -82,6 +81,24 @@ class APIException(Exception):
             "description": self.description
         }
 
+    def to_response_model(self,
+                          data=None) -> ResponseModel:
+        """
+        Converts the exception to a ResponseModel instance.
+        Useful for returning standardized API responses.
+
+        Returns:
+        --------
+        ResponseModel: An instance of ResponseModel containing the error details.
+        """
+        return ResponseModel(
+            data=data,
+            status=self.status,
+            message=self.message,
+            error_code=self.error_code,
+            description=self.description
+        )
+
     def __str__(self):
         return f"[{self.error_code}] {self.message} (Status: {self.status}, Description: {self.description})"
 
@@ -92,3 +109,10 @@ DEFAULT_HTTP_CODES = {
     ExceptionStatus.WARNING: 400,
     ExceptionStatus.FAIL: 400,
 }
+
+
+def set_default_http_codes(new_map: dict):
+    """
+    Allows overriding the default HTTP status codes.
+    """
+    DEFAULT_HTTP_CODES.update(new_map)

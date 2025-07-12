@@ -1,6 +1,4 @@
-from api_exception.exception import APIException
-from custom_enum.enums import ExceptionCode, ExceptionStatus
-
+from api_exception import APIException, ExceptionCode, ExceptionStatus
 
 def basic_example():
     try:
@@ -13,7 +11,7 @@ def basic_example():
     except APIException as e:
         # Print the structured response
         print("APIException raised:")
-        print(e.to_response())
+        print("Raw dict:", e.to_response())
 
 
 if __name__ == "__main__":
