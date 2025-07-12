@@ -1,5 +1,5 @@
 # APIException for FastAPI
-[![PyPI version](https://badge.fury.io/py/APIException.svg?cache=clear)](https://badge.fury.io/py/APIException)
+[![PyPI version](https://img.shields.io/pypi/v/APIException)](https://pypi.org/project/APIException/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **APIException** is a customizable exception-handling library designed for Python and FastAPI applications, offering standardized error codes, messages, and HTTP status responses to improve error management and consistency across APIs. This library is particularly suitable if you want to have control over the exceptions managed by the backend, ensuring a uniform response structure across your FastAPI endpoints.
