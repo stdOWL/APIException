@@ -11,7 +11,7 @@
 To install APIException, run:
 
 ```bash
-pip install APIException==0.1.8
+pip install APIException==0.1.9
 ```
 
 ## Features
