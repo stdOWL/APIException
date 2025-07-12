@@ -1,5 +1,3 @@
-# api_exception/__main__.py
-
 import click
 
 @click.command()

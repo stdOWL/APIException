@@ -228,7 +228,7 @@ python -m unittest discover -s tests
 
 ## Changelog
 
-### v0.1.5
+### v0.1.7
 - Added CLI entrypoint (`api_exception-info`)
 - Improved README structure and examples
 - Stable test suite with FastAPI `TestClient`

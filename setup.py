@@ -7,7 +7,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="APIException",
-    version="0.1.6",
+    version="0.1.7",
     description="A customizable exception handling library for FastAPI",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -17,6 +17,7 @@ setup(
     install_requires=[
         "pydantic>=2.0.0",
         "fastapi>=0.115.4",
+        "click>=8.0.0",
     ],
     entry_points={
         "console_scripts": [
