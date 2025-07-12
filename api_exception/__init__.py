@@ -2,11 +2,12 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .logger import logger
-from .exception import APIException, set_default_http_codes
+from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode
 from schemas.response_model import ResponseModel
 
 __all__ = [
+    "DEFAULT_HTTP_CODES",
     "APIException",
     "ExceptionCode",
     "BaseExceptionCode",
