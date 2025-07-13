@@ -75,7 +75,6 @@ class APIException(Exception):
         dict: A dictionary containing the error_code, status, message, and description.
         """
         return {
-            "data": None,
             "error_code": self.error_code,
             "status": self.status.value,
             "message": self.message,

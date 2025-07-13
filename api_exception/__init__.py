@@ -5,6 +5,9 @@ from .logger import logger
 from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode
 from schemas.response_model import ResponseModel
+from .response_utils import APIResponse
+import traceback
+
 
 __all__ = [
     "DEFAULT_HTTP_CODES",
@@ -15,7 +18,8 @@ __all__ = [
     "ResponseModel",
     "register_exception_handlers",
     "set_default_http_codes",
-    "logger"
+    "logger",
+    "APIResponse"
 ]
 
 
@@ -36,10 +40,59 @@ def register_exception_handlers(app: FastAPI, use_response_model: bool = True):
     async def api_exception_handler(request: Request, exc: APIException):
         logger.error(f"Exception handled for path: {request.url.path}")
         if use_response_model:
-            content = exc.to_response_model().model_dump()
+            content = exc.to_response_model().model_dump(exclude_none=False)
         else:
             content = exc.to_response()
         return JSONResponse(
             status_code=exc.http_status_code,
             content=content
         )
+
+
+    @app.middleware("http")
+    async def fallback_exception_middleware(request: Request, call_next):
+        """
+        Middleware to catch unhandled exceptions and log them.
+        This middleware acts as a fallback for any unhandled exceptions that occur
+        during request processing.
+        It logs the exception details and returns a standardized error response.
+        This is useful for catching unexpected errors that are not explicitly handled
+        by the APIException handler.
+        Parameters:
+        ----------
+        -----------
+        request: Request
+            The incoming request object.
+        call_next: Callable
+            The next middleware or endpoint to call.
+        -----------
+
+        Args:
+            request:
+            call_next:
+
+        Returns:
+            JSONResponse: A standardized error response with status code 500.
+
+        """
+        try:
+            return await call_next(request)
+        except Exception as e:
+            tb = traceback.format_exc()
+            logger.error("⚡ Unhandled Exception Fallback ⚡")
+            logger.error(f"📌 Path: {request.url.path}")
+            logger.error(f"📌 Method: {request.method}")
+            logger.error(f"📌 Client IP: {request.client.host if request.client else 'unknown'}")
+            logger.error(f"📌 Exception: {str(e)}")
+            logger.error(f"📌 Traceback:\n{tb}")
+
+            return JSONResponse(
+                status_code=500,
+                content=ResponseModel(
+                    data=None,
+                    status=ExceptionStatus.FAIL,
+                    message="Something went wrong.",
+                    error_code="ISE-500",
+                    description="An unexpected error occurred. Please try again later."
+                ).model_dump(exclude_none=False)
+            )

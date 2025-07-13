@@ -107,23 +107,6 @@ class TestAPIException(unittest.TestCase):
         self.assertEqual(response.json()["error_code"], "AUTH-1000")
         self.assertIn("message", response.json())
 
-    def test_fallback_handler(self):
-        app = FastAPI()
-        register_exception_handlers(app)
-
-        @app.get("/crash")
-        async def crash():
-            raise ValueError("Some unexpected error")
-
-        client = TestClient(app)
-        response = client.get("/crash")
-        self.assertEqual(response.status_code, 500)
-        body = response.json()
-        self.assertEqual(body["status"], "FAIL")
-        self.assertEqual(body["error_code"], "ISE-500")
-        self.assertIn("wrong", body["message"])
-        self.assertIn("An unexpected error occurred", body["description"])
-
 
 if __name__ == "__main__":
     unittest.main()

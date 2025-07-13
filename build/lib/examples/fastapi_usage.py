@@ -1,15 +1,13 @@
 from fastapi import FastAPI, Request
-from pydantic import BaseModel
-
 from api_exception import (
     APIException,
     ExceptionStatus,
     BaseExceptionCode,
     ResponseModel,
-    register_exception_handlers, APIResponse
+    register_exception_handlers
 )
 
-app = FastAPI(exclude_unset=False)
+app = FastAPI()
 
 # register default HTTP status codes for APIException
 register_exception_handlers(app)  # Default: use_response_model=True
@@ -22,8 +20,7 @@ class CustomExceptionCode(BaseExceptionCode):
     PERMISSION_DENIED = ("PERM-403", "Permission denied.", "You do not have permission to access this resource.")
 
 
-@app.get("/user/{user_id}",
-         response_model=ResponseModel)
+@app.get("/user/{user_id}")
 async def get_user(user_id: int):
     if user_id != 1:
         raise APIException(
@@ -33,8 +30,7 @@ async def get_user(user_id: int):
     return ResponseModel(data={"user_id": user_id, "name": "John Doe"})
 
 
-@app.get("/apikey",
-         response_model=ResponseModel)
+@app.get("/apikey")
 async def check_api_key(api_key: str):
     if api_key != "valid_key":
         raise APIException(error_code=CustomExceptionCode.INVALID_API_KEY)
@@ -44,36 +40,15 @@ async def check_api_key(api_key: str):
                          description="The provided API key is valid.")
 
 
-class TestResponseModel(BaseModel):
-    """
-    Custom response model for testing purposes.
-    Inherits from ResponseModel to maintain consistency.
-    """
-    id: int
-    username: str
-
-
-@app.get("/restricted",
-         response_model=ResponseModel[TestResponseModel],
-         responses=APIResponse.custom(
-             (403, CustomExceptionCode.PERMISSION_DENIED),
-             (401, CustomExceptionCode.INVALID_API_KEY)
-         ))
+@app.get("/restricted")
 async def restricted_access():
-    a = True
-    if a:
-        raise APIException(
-            error_code=CustomExceptionCode.PERMISSION_DENIED,
-            http_status_code=403,
-            status=ExceptionStatus.FAIL,
-            description="You do not have permission to access this resource.",
-            message="Permission denied."
-        )
-
-    data = TestResponseModel(id=1, username="test_user")
-
-    return ResponseModel[TestResponseModel](data=data)
-
+    raise APIException(
+        error_code=CustomExceptionCode.PERMISSION_DENIED,
+        http_status_code=403,
+        status=ExceptionStatus.FAIL,
+        description="You do not have permission to access this resource.",
+        message="Permission denied."
+    )
 
 
 if __name__ == "__main__":
