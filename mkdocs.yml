@@ -1,0 +1,94 @@
+site_name: APIException
+site_description: Professional, robust, and extensible exception handling & response standardization for FastAPI.
+site_author: Ahmet Kutay Ural
+site_url: https://ahmetkutayural.dev
+
+repo_name: akutayural/APIException
+repo_url: https://github.com/akutayural/APIException
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+
+  icon:
+    logo: docs/logo.png
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+
+  font:
+    text: Inter
+    code: Fira Code
+
+extra_css:
+  - assets/styles.css
+
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - codehilite
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.tabbed
+  - pymdownx.snippets
+  - attr_list
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/akutayural
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/akutayural/
+    - icon: fontawesome/solid/globe
+      link: https://ahmetkutayural.dev
+  generator: false
+
+plugins:
+  - search
+  - awesome-pages
+  - macros
+
+nav:
+  - 🏠 APIException: index.md
+  - 🚀 Installation: installation.md
+  - ⚡ Quick Start: usage/quick_start.md
+  - 🧩 Usage:
+      - Response Model: usage/response_model.md
+      - Custom Exception Codes: usage/custom_codes.md
+      - Fallback Middleware: usage/fallback.md
+  - 📚 Advanced:
+      - Swagger Integration: advanced/swagger.md
+      - Logging & Debug: advanced/logging.md
+  - 🔗 API Reference: reference/api.md
+  - 📝 Changelog: changelog.md

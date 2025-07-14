@@ -36,7 +36,7 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     project_urls={
-        "Documentation": "https://github.com/akutayural/APIException",
+        "Documentation": "https://akutayural.github.io/APIException/",
         "Source": "https://github.com/akutayural/APIException",
         "PyPI": "https://pypi.org/project/APIException/",
     },
