@@ -1,0 +1,17 @@
+/* Tüm metin boyutunu büyüt */
+.md-typeset {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* Kod blokları için biraz büyütme */
+code, pre {
+  font-size: 15px;
+}
+
+/* Nav bar logosunu büyüt */
+.md-header__button.md-logo img {
+  height: 50px;  /* İstediğin yüksekliği dene, örn: 50px veya 60px */
+  max-height: 50px;
+  width: auto;   /* Oranı korur */
+}
