@@ -22,7 +22,7 @@ pip show apiexception
 ```
 
 
-![Installing the APIException for FastAPI](pip-install-APIException.gif)
+![Installing the APIException for FastAPI](pip-install-apiexception-1.gif)
 
 ---
 

@@ -7,7 +7,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="apiexception",
-    version="0.1.15",
+    version="0.1.16",
     description="Consistent JSON response formatting and error handling for FastAPI applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
