@@ -34,6 +34,7 @@ class APIResponse:
             401: ("AUTH-401", "Unauthorized", "Authentication credentials were missing or invalid."),
             403: ("PERM-403", "Forbidden", "You do not have permission to access this resource."),
             404: ("RES-404", "Not Found", "The requested resource could not be found."),
+            422: ("VAL-422", "Validation Error", "Input validation failed."),
             500: ("INT-500", "Internal Server Error", "An unexpected error occurred on the server.")
         }
 

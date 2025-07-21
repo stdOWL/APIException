@@ -12,18 +12,23 @@ class ResponseModel(BaseModel, Generic[DataT]):
 
     Attributes:
     -----------
-    - data : Optional[DataT]
-        The main content of the response. Can be any type, defaults to None. It will be 'None' in error responses.
-    - status : ExceptionStatus
+    - data : Optional[`DataT`]
+        The main content of the response. Can be `any` type (TypeVar('DataT')), defaults to `None`. It will be `None` in error responses.
+        In abstract, server response payload.
+    - status : `ExceptionStatus`
         The status of the response, defaults to SUCCESS. Will be 'FAIL' in error responses. ['SUCCESS', 'WARNING', 'FAIL']
-    - message : str
+        In abstract, server response status.
+    - message : `str`
         Message providing additional context, defaults to a generic success message.
-    - error_code : Optional[str]
+        In abstract, server response message.
+    - error_code : Optional[`str`]
         Optional error code, typically None for successful responses.
-    - description : Optional[str]
-        Optional detailed description of the response. Defaults to None, but can provide more context in success/error responses.
+        In Abstract, server response error code when there is an error.
+    - description : Optional[`str`]
+        Optional detailed description of the response. Defaults to `None`, but can provide more context in success/error responses.
+        In abstract, server response detail.
 
-    Usage:
+    Usage [Skip Reading This Part If You Are Not A Developing the Backend]:
     ------
     This model can be used to standardize API responses in FastAPI applications. It allows for a consistent structure across successful and error responses, making it easier for clients to handle responses uniformly.
 
@@ -92,27 +97,27 @@ class ResponseModel(BaseModel, Generic[DataT]):
     """
     data: Optional[DataT] = Field(
         default=None,
-        description="Main content of the response, can be any type. Defaults to None. "
+        description="Main content of the response, can be `any` type. Defaults to `None`. "
                     "Error responses may not include data. Useful for successful responses.",
         # examples=[({"user_id": 1, "name": "John Doe"}, {"user_id": 2, "name": "Jane Smith"}), [], {}, None]
     )
     status: ExceptionStatus = Field(
         default=ExceptionStatus.SUCCESS,
-        description="Status of the response, defaults to SUCCESS. ['SUCCESS', 'WARNING', 'FAIL']",
+        description="Status of the response, defaults to SUCCESS. `str` ['SUCCESS', 'WARNING', 'FAIL']",
         examples=["SUCCESS", "WARNING" , "FAIL"]
     )
     message: str = Field(
         default="Operation completed successfully.",
-        description="Message providing context for the response."
+        description="Message providing context for the response. Type: `str`"
     )
     error_code: Optional[str] = Field(
         default=None,
-        description="Optional error code, typically 'None' for successful responses.",
+        description="Optional error code, typically 'None' for successful responses. Error code will be used to cover error cases. It will return `str` in the error cases.",
         examples=[None, "AUTH-1000", "USR-404", "API-401", "PERM-403"]
     )
     description: Optional[str] = Field(
         default=None,
-        description="Optional detailed description of the response. Defaults to None, but can provide more context in success/error responses.",
+        description="Optional detailed description of the response. Defaults to `None`, but can provide more context in success/error responses. Type `str`",
         examples=["Some more detail about the response or the message.", "User has been found.", "Account details have been provided.", "Permission denied."]
     )
 

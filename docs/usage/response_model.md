@@ -4,6 +4,10 @@ A **clean, predictable response structure** is the heart of a stable API.
 
 The `ResponseModel` in **APIException** makes sure every success **and** error response always has the same JSON format — easy to document, easy to parse, and friendly for frontend teams.
 
+
+![response_model.gif](response_model.gif)
+
+
 ---
 
 ## ✅ How It Works
@@ -24,7 +28,6 @@ Every API response includes:
 
 - Your frontend can **always** rely on the `status` field to drive logic
 
----
 
 ## 📌 Example
 
@@ -32,37 +35,70 @@ Every API response includes:
 
 ```python
 from fastapi import FastAPI
-from APIException import ResponseModel
-from pydantic import BaseModel
+from APIException import (
+    ResponseModel,
+    APIResponse,
+    APIException,
+    ExceptionStatus,
+    BaseExceptionCode
+)
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
-class UserResponse(BaseModel):
-    id: int
-    username: str
+'''
+Custom Exception Class that you can define in your code to make the backend responses look more standardized.
+Just extend the `BaseExceptionCode` and use it. 
+'''
+class CustomExceptionCode(BaseExceptionCode):
+    USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
+    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
+    VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
+    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
 
-@app.get("/user")
-async def get_user():
-    user = UserResponse(id=1, username="John Doe")
-    return ResponseModel[UserResponse](
-        data=user,
-        description="User fetched successfully."
+
+
+class ApiKeyModel(BaseModel):
+    api_key: str = Field(..., example="b2013852-1798-45fc-9bff-4b6916290f5b", description="Api Key.")
+
+
+@app.get(
+    "/apikey",
+    response_model=ResponseModel[ApiKeyModel],
+    responses=APIResponse.default()
+)
+async def check_api_key(api_key: str):
+    if api_key != "valid_key":
+        raise APIException(
+            error_code=CustomExceptionCode.INVALID_API_KEY,
+            http_status_code=401,
+        )
+    data = ApiKeyModel(api_key="valid_key")
+    return ResponseModel(
+        data=data,
+        status=ExceptionStatus.SUCCESS,
+        message="API key is valid",
+        description="The provided API key is valid."
     )
+
 ```
 ### ✅ Successful Response
 
 ```json
 {
-    "data": {
-        "id": 1,
-        "username": "John Doe"
-    },
-    "status": "SUCCESS",
-    "message": "Operation completed successfully.",
-    "error_code": null,
-    "description": "User fetched successfully."
+  "data": {
+    "api_key": "valid_key"
+  },
+  "status": "SUCCESS",
+  "message": "API key is valid",
+  "error_code": null,
+  "description": "The provided API key is valid."
 }
 ```
+
+![successful_response.gif](successful_response.gif)
+
 
 ### ❌ Error Response
 
@@ -70,11 +106,17 @@ async def get_user():
 {
   "data": null,
   "status": "FAIL",
-  "message": "User not found.",
-  "error_code": "USER_NOT_FOUND",
-  "description": "No user with ID 1 exists."
+  "message": "Invalid API key.",
+  "error_code": "API-401",
+  "description": "Provide a valid API key."
 }
 ```
+
+
+![error_case_response.gif](error_case_response.gif)
+
+
+
 
 ---
 

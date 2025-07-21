@@ -108,6 +108,7 @@ def register_exception_handlers(app: FastAPI,
                 logger.error(f"📌 Path: {request.url.path}")
                 logger.error(f"📌 Method: {request.method}")
                 logger.error(f"📌 Client IP: {request.client.host if request.client else 'unknown'}")
+                logger.error(f"📌 Exception Args: {e.args}")
                 logger.error(f"📌 Exception: {str(e)}")
                 logger.error(f"📌 Traceback:\n{tb}")
 

@@ -21,6 +21,11 @@ After installation, verify it’s working:
 pip show APIException
 ```
 
+
+![Installing the APIException for FastAPI](pip-install-APIException.gif)
+
+---
+
 ## ➡️ Next Step
 
 Ready to plug it in?

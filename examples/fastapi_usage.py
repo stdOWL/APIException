@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from api_exception import (
     APIException,
     ExceptionStatus,
@@ -13,33 +13,78 @@ app = FastAPI()
 register_exception_handlers(app)
 
 
+'''
+Custom Exception Class that you can define in your code to make the backend responses look more standardized.
+Just extend the `BaseExceptionCode` and use it. 
+'''
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
     INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
     PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
     VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
+    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
+
+
+class UserResponse(BaseModel):
+    id: int = Field(..., example=1, description="Unique identifier of the user")
+    username: str = Field(..., example="Micheal Alice", description="Username or full name of the user")
+
+
+class ApiKeyModel(BaseModel):
+    api_key: str = Field(..., example="b2013852-1798-45fc-9bff-4b6916290f5b", description="Api Key.")
 
 
 @app.get(
     "/user/{user_id}",
-    response_model=ResponseModel,
-    responses=APIResponse.custom(
-        (404, CustomExceptionCode.USER_NOT_FOUND),
-        (422, CustomExceptionCode.VALIDATION_ERROR)
-    )
+    response_model=ResponseModel[UserResponse],
+    responses=APIResponse.default()
 )
 async def get_user(user_id: int = Path(..., description="The ID of the user")):
-    if user_id != 1:
+    """
+    Retrieve user information by ID.
+
+    This endpoint simulates various types of exceptions to demonstrate the APIException
+    library’s ability to handle and format error responses consistently.
+
+    - If `user_id == 1`, raises `APIException` with custom error code `USER_NOT_FOUND`.
+    - If `user_id == 2`, raises a `TypeError`.
+    - If `user_id == 3`, raises a `KeyError`.
+    - If `user_id == 4`, raises an `IndexError`.
+    - If `user_id == 5`, raises a `ZeroDivisionError`.
+    - If `user_id == 6`, raises a `RuntimeError`.
+
+    Returns a successful response for any other user_id.
+
+    Parameters:
+        user_id (int): The ID of the user to retrieve.
+
+    Returns:
+        ResponseModel[UserResponse]: The user data wrapped in a standardized response model.
+    """
+    if user_id == 1:
         raise APIException(
             error_code=CustomExceptionCode.USER_NOT_FOUND,
             http_status_code=404,
         )
-    return ResponseModel(data={"user_id": user_id, "name": "John Doe"})
+    if user_id == 2:
+        raise TypeError("Invalid type provided.")
+    if user_id == 3:
+        raise KeyError("Missing key in dictionary.")
+    if user_id == 4:
+        raise IndexError("List index out of range.")
+    if user_id == 5:
+        raise ZeroDivisionError("Cannot divide by zero.")
+    if user_id == 6:
+        raise RuntimeError("Unexpected runtime issue.")
+
+    data = UserResponse(id=user_id, username="John Doe")
+    return ResponseModel(data=data,
+                         description="User fetched successfully.")
 
 
 @app.get(
     "/apikey",
-    response_model=ResponseModel,
+    response_model=ResponseModel[ApiKeyModel],
     responses=APIResponse.custom(
         (401, CustomExceptionCode.INVALID_API_KEY),
         (422, CustomExceptionCode.VALIDATION_ERROR)
@@ -51,17 +96,13 @@ async def check_api_key(api_key: str):
             error_code=CustomExceptionCode.INVALID_API_KEY,
             http_status_code=401,
         )
+    data = ApiKeyModel(api_key="valid_key")
     return ResponseModel(
-        data={"api_key": api_key},
+        data=data,
         status=ExceptionStatus.SUCCESS,
         message="API key is valid",
         description="The provided API key is valid."
     )
-
-
-class UserResponse(BaseModel):
-    id: int
-    username: str
 
 
 @app.get(

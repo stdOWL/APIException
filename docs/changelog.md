@@ -3,9 +3,22 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
-## [0.1.12] - 2025-07-14
-
+## [v0.1.13] - 2025-07-21
 ✅ Initial stable release!
+
+- /examples/fastapi_usage.py has been updated.
+
+- 422 Pydantic error has been fixed in APIResponse.default()
+
+- Documentation has been updated.
+
+- Exception Args has been added to the logs.
+
+- Readme has been updated. New gifs have been added.
+
+
+
+## [0.1.12] - 2025-07-14
 
 - Documentation has been added to the project.
 

@@ -8,6 +8,9 @@ Download the package from PyPI and install it using pip:
 pip install APIException
 ```
 
+![Installing the APIException for FastAPI](pip-install-APIException.gif)
+
+
 Just import the `register_exception_handlers` function from `APIException` and call it with your FastAPI app instance to set up global exception handling:
 ```python
 from APIException import register_exception_handlers
@@ -21,7 +24,7 @@ That’s it — copy, paste, and you’re good to go. So easy, isn't it?
 Now all your endpoints will return consistent `success` and `error` responses, and your Swagger docs will be beautifully documented.
 Exception handling will be logged, and unexpected errors will return a clear JSON response instead of FastAPI’s default HTML error page.
 
-
+---
 ## 🔍 **See It in Action!**
 
 ```python
@@ -49,10 +52,7 @@ class CustomExceptionCode(BaseExceptionCode):
 
 @app.get("/user/{user_id}",
     response_model=ResponseModel[UserResponse],
-    responses=APIResponse.custom(
-        (401, CustomExceptionCode.INVALID_API_KEY),
-        (403, CustomExceptionCode.PERMISSION_DENIED)
-    )
+    responses=APIResponse.default()
 )
 async def user(user_id: int = Path()):
     if user_id == 1:
@@ -70,19 +70,21 @@ async def user(user_id: int = Path()):
 When you run your FastAPI app and open **Swagger UI** (`/docs`),  
 your endpoints will display **clean, predictable response schemas** like this:
 
-![Consistent Swagger Responses](img_4.png)
+
+![Consistent Swagger Responses](_user_{user_id}.gif)
+
 
 #### - Successful API Response? 
 ```json
 {
   "data": {
-    "id": 1,
+    "id": 7,
     "username": "John Doe"
   },
   "status": "SUCCESS",
   "message": "Operation completed successfully.",
   "error_code": null,
-  "description": "User found and returned."
+  "description": "User fetched successfully."
 }
 ```
 #### - Error API Response? 
@@ -91,8 +93,8 @@ your endpoints will display **clean, predictable response schemas** like this:
   "data": null,
   "status": "FAIL",
   "message": "User not found.",
-  "error_code": "USER_NOT_FOUND",
-  "description": "No user with ID 1 exists."
+  "error_code": "USR-404",
+  "description": "The user ID does not exist."
 }
 ```
 In both cases, the response structure is **consistent**.

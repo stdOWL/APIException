@@ -28,33 +28,48 @@ Your API now returns consistent success & error responses, and unexpected server
 Here’s a minimal example:
 ```python
 from fastapi import FastAPI, Path
-from APIException import APIException, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
-from pydantic import BaseModel
+from APIException import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+from pydantic import BaseModel, Field
 
 app = FastAPI()
+
+# Register exception handlers globally to have the consistent
+# error handling and response structure
 register_exception_handlers(app=app)
 
+# Create the validation model for your response
 class UserResponse(BaseModel):
-    id: int
-    username: str
+    id: int = Field(..., example=1, description="Unique identifier of the user")
+    username: str = Field(..., example="Micheal Alice", description="Username or full name of the user")
 
+    
+# Define your custom exception codes extending BaseExceptionCode
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
+    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
+
 
 @app.get("/user/{user_id}",
     response_model=ResponseModel[UserResponse],
     responses=APIResponse.default()
 )
-async def get_user(user_id: int = Path()):
+async def user(user_id: int = Path()):
     if user_id == 1:
-        raise APIException(error_code=CustomExceptionCode.USER_NOT_FOUND, http_status_code=404)
-
-    data = UserResponse(id=user_id, username="John Doe")
-    return ResponseModel[UserResponse](data=data)
+        raise APIException(
+            error_code=CustomExceptionCode.USER_NOT_FOUND,
+            http_status_code=401,
+        )
+    data = UserResponse(id=1, username="John Doe")
+    return ResponseModel[UserResponse](
+        data=data,
+        description="User found and returned."
+    )
 ```
-The below image demonstrates what actually the example code does.
+The below gif demonstrates what actually the example code does.
 
-![APIResponse.default()](img_3.png)
+![Consistent Swagger Responses](_user_{user_id}-quick.gif)
+
 
 `Swagger UI` will be well structured. 
 

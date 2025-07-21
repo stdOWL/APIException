@@ -1,6 +1,10 @@
 # APIException for FastAPI
 [![PyPI version](https://img.shields.io/pypi/v/APIException?cacheSeconds=60)](https://pypi.org/project/APIException/)
+[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://akutayural.github.io/APIException/)
+[![Downloads](https://pepy.tech/badge/APIException)](https://pepy.tech/project/APIException)
+[![Python Versions](https://img.shields.io/pypi/pyversions/APIException.svg)](https://pypi.org/project/APIException/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://akutayural.github.io/APIException/)
 
 **APIException** is a fully extensible exception-handling library for **FastAPI**, designed to help you **standardize error responses**, **manage custom error codes**, and ensure **predictable, well-documented APIs** — from day one.
@@ -26,6 +30,11 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 ```bash
 pip install APIException==0.1.12
 ```
+
+![pip-install-APIException.gif](pip-install-APIException.gif)
+
+---
+
 ## ⚡ Quickstart
 
 **1️⃣ Register the Handler**
@@ -42,6 +51,57 @@ register_exception_handlers(app)  # uses ResponseModel by default
 ```
 
 ---
+
+## 🔍 See It In Action
+
+```python
+from fastapi import FastAPI, Path
+from APIException import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Register exception handlers globally to have the consistent
+# error handling and response structure
+register_exception_handlers(app=app)
+
+# Create the validation model for your response
+class UserResponse(BaseModel):
+    id: int
+    username: str
+
+# Define your custom exception codes extending BaseExceptionCode
+class CustomExceptionCode(BaseExceptionCode):
+    USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
+    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
+
+
+@app.get("/user/{user_id}",
+    response_model=ResponseModel[UserResponse],
+    responses=APIResponse.custom(
+        (401, CustomExceptionCode.INVALID_API_KEY),
+        (403, CustomExceptionCode.PERMISSION_DENIED)
+    )
+)
+async def user(user_id: int = Path()):
+    if user_id == 1:
+        raise APIException(
+            error_code=CustomExceptionCode.USER_NOT_FOUND,
+            http_status_code=401,
+        )
+    data = UserResponse(id=1, username="John Doe")
+    return ResponseModel[UserResponse](
+        data=data,
+        description="User found and returned."
+    )
+```
+
+![_user_{user_id}.gif](_user_{user_id}.gif)
+
+---
+
+
 
 **2️⃣ Raise an Exception**
 
@@ -80,6 +140,12 @@ async def success():
         message="Everything went fine!"
     )
 ```
+
+**_Response Model In Abstract:_**
+
+
+![response_model.gif](response_model.gif)
+
 
 ---
 
@@ -186,11 +252,26 @@ python -m unittest discover -s tests
 
 ## 🔗 Full Documentation
 
-Find detailed guides and examples in the official docs.
+Find detailed guides and examples in the [official docs](https://akutayural.github.io/APIException/).
 
 ---
 
 ## 📜 Changelog
+
+**v0.1.13 (2025-07-21)**
+
+✅ **Initial stable version**
+
+- /examples/fastapi_usage.py has been updated.
+
+- 422 Pydantic error has been fixed in APIResponse.default()
+
+- Documentation has been updated.
+
+- Exception Args has been added to the logs.
+
+- Readme has been updated. New gifs have been added.
+
 
 **v0.1.12 (2025-07-14)**
 
@@ -213,6 +294,20 @@ Find detailed guides and examples in the official docs.
 - Raw dict or Pydantic output
 
 - Automatic logging improvements
+
+
+**v0.1.0 (2025-06-25)**
+
+
+🚀 Prototype started!
+
+- Project scaffolding
+
+- `ResponseModel` has been added
+
+- `APIException` has been added
+
+- Defined base ideas for standardizing error handling
 
 ---
 
