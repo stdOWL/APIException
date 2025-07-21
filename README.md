@@ -5,7 +5,6 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/APIException.svg)](https://pypi.org/project/APIException/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://akutayural.github.io/APIException/)
 
 **APIException** is a fully extensible exception-handling library for **FastAPI**, designed to help you **standardize error responses**, **manage custom error codes**, and ensure **predictable, well-documented APIs** — from day one.
 
