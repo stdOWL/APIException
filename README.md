@@ -28,7 +28,7 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 ## 📦 Installation
 
 ```bash
-pip install APIException==0.1.12
+pip install apiexception
 ```
 
 ![pip-install-APIException.gif](pip-install-APIException.gif)

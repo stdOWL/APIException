@@ -5,7 +5,7 @@
 ## ⚡ Quick Installation
 Download the package from PyPI and install it using pip:
 ```bash
-pip install APIException
+pip install apiexception
 ```
 
 ![Installing the APIException for FastAPI](pip-install-APIException.gif)
