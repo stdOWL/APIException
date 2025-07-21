@@ -3,6 +3,15 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
+
+## [v0.1.14] - 2025-07-22
+✅ Initial stable release!
+
+- setup.py has been updated.
+
+- Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with `PEP 625`.
+
+
 ## [v0.1.13] - 2025-07-21
 ✅ Initial stable release!
 

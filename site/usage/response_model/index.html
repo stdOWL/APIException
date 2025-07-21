@@ -54,6 +54,8 @@
     
       <link rel="stylesheet" href="../../assets/styles.css">
     
+      <link rel="stylesheet" href="../../overrides/stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -71,7 +73,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="amber">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="amber">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -126,7 +128,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
@@ -136,7 +138,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
@@ -232,7 +234,7 @@
   
     
   
-  🏠 APIException
+  APIException
 
       </a>
     </li>
@@ -415,7 +417,7 @@
   
   
   <span class="md-ellipsis">
-    🏠 APIException
+    APIException
     
   </span>
   
@@ -869,6 +871,7 @@
 <h1 id="using-responsemodel">🧩 Using <code>ResponseModel</code><a class="headerlink" href="#using-responsemodel" title="Permanent link">&para;</a></h1>
 <p>A <strong>clean, predictable response structure</strong> is the heart of a stable API.</p>
 <p>The <code>ResponseModel</code> in <strong>APIException</strong> makes sure every success <strong>and</strong> error response always has the same JSON format — easy to document, easy to parse, and friendly for frontend teams.</p>
+<p><img alt="response_model.gif" src="../response_model.gif" /></p>
 <hr />
 <h2 id="how-it-works">✅ How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p>Every API response includes:</p>
@@ -891,48 +894,78 @@
 <p>Your frontend can <strong>always</strong> rely on the <code>status</code> field to drive logic</p>
 </li>
 </ul>
-<hr />
 <h2 id="example">📌 Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <h3 id="import-and-use">✅ Import and Use<a class="headerlink" href="#import-and-use" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">APIException</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">APIException</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ResponseModel</span><span class="p">,</span>
+    <span class="n">APIResponse</span><span class="p">,</span>
+    <span class="n">APIException</span><span class="p">,</span>
+    <span class="n">ExceptionStatus</span><span class="p">,</span>
+    <span class="n">BaseExceptionCode</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">UserResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Custom Exception Class that you can define in your code to make the backend responses look more standardized.</span>
+<span class="sd">Just extend the `BaseExceptionCode` and use it. </span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomExceptionCode</span><span class="p">(</span><span class="n">BaseExceptionCode</span><span class="p">):</span>
+    <span class="n">USER_NOT_FOUND</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;USR-404&quot;</span><span class="p">,</span> <span class="s2">&quot;User not found.&quot;</span><span class="p">,</span> <span class="s2">&quot;The user ID does not exist.&quot;</span><span class="p">)</span>
+    <span class="n">INVALID_API_KEY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;API-401&quot;</span><span class="p">,</span> <span class="s2">&quot;Invalid API key.&quot;</span><span class="p">,</span> <span class="s2">&quot;Provide a valid API key.&quot;</span><span class="p">)</span>
+    <span class="n">PERMISSION_DENIED</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;PERM-403&quot;</span><span class="p">,</span> <span class="s2">&quot;Permission denied.&quot;</span><span class="p">,</span> <span class="s2">&quot;Access to this resource is forbidden.&quot;</span><span class="p">)</span>
+    <span class="n">VALIDATION_ERROR</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;VAL-422&quot;</span><span class="p">,</span> <span class="s2">&quot;Validation Error&quot;</span><span class="p">,</span> <span class="s2">&quot;Input validation failed.&quot;</span><span class="p">)</span>
+    <span class="n">TYPE_ERROR</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;TYPE-400&quot;</span><span class="p">,</span> <span class="s2">&quot;Type error.&quot;</span><span class="p">,</span> <span class="s2">&quot;A type mismatch occurred in the request.&quot;</span><span class="p">)</span>  <span class="c1"># &lt;- EKLENDİ</span>
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/user&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_user</span><span class="p">():</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">UserResponse</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s2">&quot;John Doe&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ResponseModel</span><span class="p">[</span><span class="n">UserResponse</span><span class="p">](</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;User fetched successfully.&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ApiKeyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">example</span><span class="o">=</span><span class="s2">&quot;b2013852-1798-45fc-9bff-4b6916290f5b&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Api Key.&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">&quot;/apikey&quot;</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=</span><span class="n">ResponseModel</span><span class="p">[</span><span class="n">ApiKeyModel</span><span class="p">],</span>
+    <span class="n">responses</span><span class="o">=</span><span class="n">APIResponse</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_api_key</span><span class="p">(</span><span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">api_key</span> <span class="o">!=</span> <span class="s2">&quot;valid_key&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span>
+            <span class="n">error_code</span><span class="o">=</span><span class="n">CustomExceptionCode</span><span class="o">.</span><span class="n">INVALID_API_KEY</span><span class="p">,</span>
+            <span class="n">http_status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ApiKeyModel</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;valid_key&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ResponseModel</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">ExceptionStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s2">&quot;API key is valid&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The provided API key is valid.&quot;</span>
     <span class="p">)</span>
 </code></pre></div>
 <h3 id="successful-response">✅ Successful Response<a class="headerlink" href="#successful-response" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Operation completed successfully.&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;error_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User fetched successfully.&quot;</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;api_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid_key&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;API key is valid&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;error_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The provided API key is valid.&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
+<p><img alt="successful_response.gif" src="../successful_response.gif" /></p>
 <h3 id="error-response">❌ Error Response<a class="headerlink" href="#error-response" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FAIL&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User not found.&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;error_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USER_NOT_FOUND&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No user with ID 1 exists.&quot;</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid API key.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;error_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;API-401&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Provide a valid API key.&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
+<p><img alt="error_case_response.gif" src="../error_case_response.gif" /></p>
 <hr />
 <p>No matter what happens — <strong>same shape, same fields, always predictable.</strong></p>
 <h2 id="why-use-it">⚡ Why Use It?<a class="headerlink" href="#why-use-it" title="Permanent link">&para;</a></h2>
