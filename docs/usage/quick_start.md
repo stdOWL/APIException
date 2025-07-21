@@ -6,7 +6,7 @@ Get up and running with APIException in just a few minutes!
 
 If you haven't done it yet, Let's first start by installing APIException from PyPI:
 ```bash
-pip install APIException
+pip install apiexception
 ```
 
 ## ✅ Register Exception Handlers

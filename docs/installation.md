@@ -6,7 +6,7 @@ Install it, plug it in — and enjoy consistent API responses.
 ## 📦 Install via pip
 
 ```bash
-pip install APIException
+pip install apiexception
 ```
 This will install the latest stable release directly from PyPI.
 
@@ -18,7 +18,7 @@ This will install the latest stable release directly from PyPI.
 
 After installation, verify it’s working:
 ```bash
-pip show APIException
+pip show apiexception
 ```
 
 

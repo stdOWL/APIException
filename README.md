@@ -258,17 +258,26 @@ Find detailed guides and examples in the [official docs](https://akutayural.gith
 
 ## 📜 Changelog
 
-**v0.1.14 (2025-07-22)**
+**v0.1.15 (2025-07-22)**
 
 ✅ **Initial stable version**
+
+- setup.py has been updated.
+
+- Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with `PEP 625`.
+
+- Documentation has been updated. 
+
+- Readme.md has been updated. 
+
+
+**v0.1.14 (2025-07-22)**
 
 - setup.py has been updated.
 
 - Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with PEP 625.
 
 **v0.1.13 (2025-07-21)**
-
-✅ **Initial stable version**
 
 - /examples/fastapi_usage.py has been updated.
 
