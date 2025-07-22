@@ -40,27 +40,6 @@ class ApiKeyModel(BaseModel):
     responses=APIResponse.default()
 )
 async def get_user(user_id: int = Path(..., description="The ID of the user")):
-    """
-    Retrieve user information by ID.
-
-    This endpoint simulates various types of exceptions to demonstrate the APIException
-    library’s ability to handle and format error responses consistently.
-
-    - If `user_id == 1`, raises `APIException` with custom error code `USER_NOT_FOUND`.
-    - If `user_id == 2`, raises a `TypeError`.
-    - If `user_id == 3`, raises a `KeyError`.
-    - If `user_id == 4`, raises an `IndexError`.
-    - If `user_id == 5`, raises a `ZeroDivisionError`.
-    - If `user_id == 6`, raises a `RuntimeError`.
-
-    Returns a successful response for any other user_id.
-
-    Parameters:
-        user_id (int): The ID of the user to retrieve.
-
-    Returns:
-        ResponseModel[UserResponse]: The user data wrapped in a standardized response model.
-    """
     if user_id == 1:
         raise APIException(
             error_code=CustomExceptionCode.USER_NOT_FOUND,
