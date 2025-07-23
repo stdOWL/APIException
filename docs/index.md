@@ -1,4 +1,7 @@
-# **APIException** For FastAPI
+<link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+
+# APIException: Standardised Exception Handling for FastAPI
+
 
 ---
 
