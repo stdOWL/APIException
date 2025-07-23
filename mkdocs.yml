@@ -43,7 +43,7 @@ theme:
   custom_dir: docs/overrides
 
   logo: assets/logo.png
-  favicon: assets/favicon.ico
+  favicon: favicon/favicon.ico
 
   font:
     text: Inter
