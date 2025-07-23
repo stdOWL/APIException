@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/akutayural/APIException/main/assets/logo.png" alt="APIException Logo" width="200"/>
 </p>
+<p align="center"><i>Standardising FastAPI responses — for clean, consistent, and production-grade APIs.</i></p>
 
 # APIException: Standardised Exception Handling for FastAPI
 [![PyPI version](https://img.shields.io/pypi/v/APIException?cacheSeconds=60)](https://pypi.org/project/APIException/)
