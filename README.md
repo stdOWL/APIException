@@ -1,4 +1,4 @@
-# APIException for FastAPI
+# APIException: Standardised Exception Handling for FastAPI
 [![PyPI version](https://img.shields.io/pypi/v/APIException?cacheSeconds=60)](https://pypi.org/project/APIException/)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://akutayural.github.io/APIException/)
 [![Downloads](https://pepy.tech/badge/APIException)](https://pepy.tech/project/APIException)
@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-**APIException** is a fully extensible exception-handling library for **FastAPI**, designed to help you **standardize error responses**, **manage custom error codes**, and ensure **predictable, well-documented APIs** — from day one.
+**APIException** is a robust, production-ready Python library for FastAPI that simplifies exception handling and ensures consistent, well-structured API responses. Designed for developers who want to eliminate boilerplate error handling and improve Swagger/OpenAPI documentation, APIException makes your FastAPI projects cleaner and easier to maintain.
 
 - 🔒 Consistent JSON responses for **both** success and errors.
 - 📚 Beautiful Swagger/OpenAPI documentation with clear error cases.
@@ -24,7 +24,7 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 
 ---
 
-## 📦 Installation
+## 📦 Installation via pip
 
 ```bash
 pip install apiexception
@@ -34,7 +34,7 @@ pip install apiexception
 
 ---
 
-## ⚡ Quickstart
+ ## ⚡ Quickstart: How to Integrate APIException
 
 **1️⃣ Register the Handler**
 
@@ -51,7 +51,7 @@ register_exception_handlers(app)  # uses ResponseModel by default
 
 ---
 
-## 🔍 See It In Action
+ ## 🔍 Example: Error Handling with Custom Codes
 
 ```python
 from fastapi import FastAPI, Path
@@ -344,4 +344,18 @@ If you like this library and find it useful, don’t forget to give it a ⭐ on 
 ## Contact
 If you have any questions or suggestions, please feel free to reach out at [ahmetkutayural.dev](https://ahmetkutayural.dev/#contact)
 
+---
 
+## 📖 Learn More
+
+📰 **Read the full article** explaining the motivation, features, and examples:  
+👉 [Tired of Messy FastAPI Responses? Standardise Them with APIException](https://medium.com/@ahmetkutayural/tired-of-messy-fastapi-responses-standardise-them-with-apiexception-528b92f5bc4f)
+
+📚 **Full APIException Documentation**  
+https://akutayural.github.io/APIException/
+
+🐍 **PyPI**  
+https://pypi.org/project/apiexception/
+
+💻 **Author Website**  
+https://ahmetkutayural.dev
