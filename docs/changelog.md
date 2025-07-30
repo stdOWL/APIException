@@ -3,6 +3,7 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
+
 ## [v0.1.16] - 2025-07-22
 
 ✅ **Initial stable version**
