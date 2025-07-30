@@ -3,7 +3,7 @@ name = "apiexception"
 version = "0.1.16"
 description = "Consistent JSON response formatting and error handling for FastAPI applications"
 authors = [{ name = "Ahmet Kutay URAL", email = "ahmetkutayural@gmail.com" }]
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 readme = "README.md"
 keywords = [
     "fastapi",
@@ -19,6 +19,8 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
