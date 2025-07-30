@@ -35,7 +35,7 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 pip install apiexception
 ```
 
-![pip-install-apiexception-1.gif](pip-install-apiexception-1.gif)
+![pip-install-apiexception-1.gif](assets/pip-install-apiexception-1.gif)
 
 ---
 
@@ -148,7 +148,7 @@ async def success():
 **_Response Model In Abstract:_**
 
 
-![response_model.gif](response_model.gif)
+![response_model.gif](assets/response_model.gif)
 
 
 ---
