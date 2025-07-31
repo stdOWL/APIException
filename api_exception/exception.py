@@ -29,7 +29,9 @@ class APIException(Exception):
                  http_status_code: int = 400,
                  status: ExceptionStatus = ExceptionStatus.FAIL,
                  message: str = None,
-                 description: str = None):
+                 description: str = None,
+                 log_exception: bool = True,
+                 log_message: str = None):
         """
         Initializes an APIException with a specific error code, HTTP status, and optional message and description.
 
@@ -45,6 +47,12 @@ class APIException(Exception):
             Optional custom message for the exception. Defaults to the message from error_code if None.
         - description : str, optional
             Optional custom detailed description. Defaults to description from error_code if None.
+        - log_exception : bool, optional
+            If True, logs the exception details. Defaults to True.
+        - log_message : str, optional
+            Optional custom log message. If provided, it will be logged along with the exception details.
+            Defaults to None, meaning no additional log message will be added.
+
         """
         # Use provided message or default to the message from the error code
         self.message = message if message else error_code.message
@@ -52,11 +60,15 @@ class APIException(Exception):
         self.description = description if description else error_code.description
         self.status = status
         self.http_status_code = http_status_code or DEFAULT_HTTP_CODES.get(status, 400)
+        self.log_exception = log_exception
+        self.log_message = log_message
 
-        # Log the exception details
-        self.log_exception()
+        if self.log_exception:
+            # Log the exception details
+            self.__log__()
 
-    def log_exception(self):
+
+    def __log__(self) -> None:
         """
         Logs the exception details with file and line number where the exception was raised.
         """
@@ -64,6 +76,11 @@ class APIException(Exception):
         logger.error(f"Exception Raised in {frame.filename}, line {frame.lineno}")
         logger.error(
             f"Code: {self.error_code}, Status: {self.status}, Message: {self.message}, Description: {self.description}")
+
+        if self.log_message is not None:
+            logger.error(f"Log Message: {self.log_message}")
+
+
 
     def to_response(self) -> dict:
         """

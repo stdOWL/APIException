@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
-from .logger import logger
+from .logger import logger, add_file_handler
 from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode
 from schemas.response_model import ResponseModel
@@ -23,31 +23,122 @@ __all__ = [
     "register_exception_handlers",
     "set_default_http_codes",
     "logger",
+    "add_file_handler",
     "APIResponse"
 ]
 
 
 def register_exception_handlers(app: FastAPI,
                                 use_response_model: bool = True,
-                                use_fallback_middleware: bool = True):
+                                use_fallback_middleware: bool = True,
+                                log_traceback: bool = True,
+                                log_traceback_unhandled_exception: bool = True):
     """
-    Registers the APIException handler.
+    Attach APIException and fallback handlers to a FastAPI app.
 
-    Parameters:
-    -----------
+    This ensures that any raised APIException will return a standardized response.
+    Optionally, a fallback middleware can catch unhandled exceptions and return
+    a consistent error structure.
+
+    Also, it can log the exception details, including the traceback,
+    request path, method, and client IP address, exception, exception args and so on.
+    This is useful for debugging and monitoring purposes.
+    By default, it automatically logs everything related to the exception described above.
+
+
+    Parameters
+    ----------
     app : FastAPI
-        The FastAPI app or sub-app.
-    use_response_model : bool, optional
-        If True, uses ResponseModel (Pydantic) for responses.
-        If False, uses raw dict format.
-    use_fallback_middleware : bool, optional
-        If True, adds a fallback middleware to catch unhandled exceptions.
-        If False, only the APIException handler is registered.
+        The FastAPI application instance.
+    use_response_model : bool, default=True
+        If True, uses the ResponseModel schema for error responses.
+        If False, returns plain dictionaries.
+    use_fallback_middleware : bool, default=True
+        If True, catches ALL unhandled exceptions (runtime errors, etc.) and logs them.
+    log_traceback : bool, default=True
+        If True, logs traceback for APIException errors.
+    log_traceback_unhandled_exception : bool, default=True
+        If True, logs traceback for unhandled runtime exceptions.
+    Examples
+    --------
+    **1️⃣ Basic usage (default setup):**
+    ```python
+    from fastapi import FastAPI
+    from api_exception import register_exception_handlers
+
+    app = FastAPI()
+    register_exception_handlers(app)
+    ```
+
+    **2️⃣ Production setup – log to file, disable traceback for handled exceptions (but keep for crashes):**
+    ```python
+    from fastapi import FastAPI
+    from api_exception import register_exception_handlers, add_file_handler, logger
+
+    app = FastAPI()
+
+    # Log to a file for production monitoring
+    add_file_handler("prod_errors.log")
+
+    # Only log tracebacks for unhandled runtime errors (not for expected APIExceptions)
+    register_exception_handlers(
+        app,
+        log_traceback=False,
+        log_traceback_unhandled_exception=True
+    )
+
+    # Increase verbosity for debugging
+    logger.setLevel("DEBUG")
+    ```
+
+    **3️⃣ Lightweight setup for development – skip fallback middleware and return raw dicts (not ResponseModel):**
+    ```python
+    from fastapi import FastAPI
+    from api_exception import register_exception_handlers
+
+    app = FastAPI()
+
+    register_exception_handlers(
+        app,
+        use_fallback_middleware=False,   # Let FastAPI's default error pages handle unhandled exceptions
+        use_response_model=False         # Return plain dict responses for speed
+    )
+    ```
+
+    **4️⃣ Full control setup – log to both console and file, tweak everything:**
+    ```python
+    from fastapi import FastAPI
+    from api_exception import register_exception_handlers, add_file_handler, logger
+
+    app = FastAPI()
+
+    # Log to console (default) and also to file
+    add_file_handler("detailed_logs.log")
+
+    # Register with all customizations
+    register_exception_handlers(
+        app,
+        use_response_model=True,
+        use_fallback_middleware=True,
+        log_traceback=True,
+        log_traceback_unhandled_exception=False  # Don't log tracebacks for runtime errors and/or
+                                                 #  any uncaught errors(db error, 3rd party etc.) (just the message)
+    )
+
+    # Set logger level to WARNING for cleaner production logs
+    logger.setLevel("WARNING")
+    ```
     """
 
     @app.exception_handler(APIException)
     async def api_exception_handler(request: Request, exc: APIException):
         logger.error(f"Exception handled for path: {request.url.path}")
+        logger.error(f"Method: {request.method}")
+        logger.error(f"Client IP: {request.client.host if request.client else 'unknown'}")
+        if log_traceback:
+            tb = traceback.format_exc()
+            logger.error(f"Traceback:\n{tb}")
+
         if use_response_model:
             content = exc.to_response_model().model_dump(exclude_none=False)
         else:
@@ -61,6 +152,9 @@ def register_exception_handlers(app: FastAPI,
 
         @app.exception_handler(RequestValidationError)
         async def validation_exception_handler(request, exc):
+            description = exc.errors()[0]["msg"].replace("Value error, ", "") if exc.errors()[0]["msg"].startswith(
+                "Value error, ") else exc.errors()[0]["msg"]
+
             return JSONResponse(
                 status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                 content=ResponseModel(
@@ -68,8 +162,8 @@ def register_exception_handlers(app: FastAPI,
                     status=ExceptionStatus.FAIL,
                     message="Validation Error",
                     error_code="VAL-422",
-                    description="Input validation failed.",
-                ).dict(),
+                    description=description,
+                ).model_dump(exclude_none=False),
             )
 
 
@@ -110,6 +204,8 @@ def register_exception_handlers(app: FastAPI,
                 logger.error(f"📌 Client IP: {request.client.host if request.client else 'unknown'}")
                 logger.error(f"📌 Exception Args: {e.args}")
                 logger.error(f"📌 Exception: {str(e)}")
+
+            if log_traceback_unhandled_exception:
                 logger.error(f"📌 Traceback:\n{tb}")
 
                 return JSONResponse(
