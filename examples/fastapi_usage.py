@@ -33,11 +33,20 @@ class UserResponse(BaseModel):
 class ApiKeyModel(BaseModel):
     api_key: str = Field(..., example="b2013852-1798-45fc-9bff-4b6916290f5b", description="Api Key.")
 
-
 @app.get(
     "/user/{user_id}",
     response_model=ResponseModel[UserResponse],
-    responses=APIResponse.default()
+    responses=APIResponse.default(),
+    description="""
+Examples:
+- Get user with ID 1: `/user/1` - APIException: If the user ID is 1.
+- Get user with ID 2: `/user/2` - TypeError: If the user ID 2.
+- Get user with ID 3: `/user/3` - KeyError: If the user ID is 3.
+- Get user with ID 4: `/user/4` - IndexError: If the user ID is 4.
+- Get user with ID 5: `/user/5` - ZeroDivisionError: If the user ID is 5.
+- Get user with ID 6: `/user/6` - RuntimeError: If the user ID is 6.
+- Get user with ID 7: `/user/7` - Returns a valid user response.
+"""
 )
 async def get_user(user_id: int = Path(..., description="The ID of the user")):
     if user_id == 1:
