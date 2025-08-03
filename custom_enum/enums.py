@@ -19,6 +19,8 @@ class BaseExceptionCode(Enum):
     - error_code: Unique identifier for the error.
     - message: User-friendly description of the error.
     - description: Optional detailed description for additional context.
+    - rfc7807_type: Optional A URI reference for the error type, a human-readable document or spec for RFC 7807 format
+    - rfc7807_instance: Optional A URI that identifies the specific occurrence of the error for RFC 7807 format
     """
 
     @property
@@ -33,6 +35,13 @@ class BaseExceptionCode(Enum):
     def description(self):
         return self.value[2] if len(self.value) > 2 else ""
 
+    @property
+    def rfc7807_type(self):
+        return self.value[3] if len(self.value) > 3 else ""
+
+    @property
+    def rfc7807_instance(self):
+        return self.value[4] if len(self.value) > 4 else ""
 
 class ExceptionCode(BaseExceptionCode):
     """

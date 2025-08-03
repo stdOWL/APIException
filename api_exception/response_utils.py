@@ -1,6 +1,7 @@
 from typing import Dict
 from schemas.response_model import ResponseModel
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode
+from schemas.rfc7807_model import RFC7807ResponseModel
 
 
 class APIResponse:
@@ -53,7 +54,13 @@ class APIResponse:
                 "description": msg,
                 "content": {
                     "application/json": {
-                        "example": example
+                        "example": {
+                            "data": None,
+                            "status": "FAIL",
+                            "message": msg,
+                            "description": desc,
+                            "error_code": err_code
+                        }
                     }
                 }
             }
@@ -106,6 +113,64 @@ class APIResponse:
                 message=exception_code.message,
                 description=exception_code.description,
                 error_code=exception_code.error_code
+            ).model_dump()
+
+            responses[status_code] = {
+                "description": f"Status: {status_code} - {exception_code.error_code}",
+                "content": {
+                    "application/json": {
+                        "example": example
+                    }
+                }
+            }
+        return responses
+
+    @staticmethod
+    def rfc7807(*items: tuple[int, 'BaseExceptionCode']):
+        """
+        Generate one or more custom error responses for FastAPI Swagger docs
+        using your defined ExceptionCode enums.
+
+        Each custom response will use your standardized ResponseModel
+        with FAIL status, the specified error_code, message, and description.
+        The 'data' field will always be None for error cases.
+
+        Args:
+            *items: One or more tuples of (HTTP status code, ExceptionCode).
+                - status_code (int): The HTTP status code to return.
+                - exception_code (BaseExceptionCode): Your custom ExceptionCode entry.
+
+        Example:
+        ```python
+            from custom_enum.enums import CustomExceptionCode
+            from api_exception.response_utils import APIResponse
+            responses = APIResponse.custom(
+                (403, CustomExceptionCode.PERMISSION_DENIED),
+                (401, CustomExceptionCode.INVALID_API_KEY)
+            )
+        ```
+
+        Returns:
+            Dict[int, dict]: A dictionary of status code to response spec,
+            ready to be used in FastAPI route 'responses' parameter.
+        """
+        if not items:
+            raise ValueError("At least one (status_code, exception_code) pair must be provided.")
+        if not all(isinstance(item, tuple) and (len(item) == 2 or len(item) == 4) for item in items):
+            raise ValueError("Each item must be a tuple of (status_code, exception_code).")
+        if not all(isinstance(item[1], BaseExceptionCode) for item in items):
+            raise ValueError("Each exception_code must be an instance of BaseExceptionCode or its subclass.")
+        if not all(isinstance(item[0], int) for item in items):
+            raise ValueError("Each status_code must be an integer.")
+
+        responses = {}
+        for status_code, exception_code, error_type, error_instance in items:
+            example = RFC7807ResponseModel(
+                instance=error_instance,
+                type=error_type,
+                title=exception_code.message,
+                detail=exception_code.description,
+                status=status_code
             ).model_dump()
 
             responses[status_code] = {

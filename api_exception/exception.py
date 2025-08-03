@@ -1,9 +1,9 @@
 import traceback
 
+from schemas.rfc7807_model import RFC7807ResponseModel
 from .logger import logger
 from custom_enum.enums import ExceptionCode, ExceptionStatus
 from schemas.response_model import ResponseModel
-
 
 
 class APIException(Exception):
@@ -62,11 +62,12 @@ class APIException(Exception):
         self.http_status_code = http_status_code or DEFAULT_HTTP_CODES.get(status, 400)
         self.log_exception = log_exception
         self.log_message = log_message
+        self.rfc7807_type = error_code.rfc7807_type
+        self.rfc7807_instance = error_code.rfc7807_instance
 
         if self.log_exception:
             # Log the exception details
             self.__log__()
-
 
     def __log__(self) -> None:
         """
@@ -79,8 +80,6 @@ class APIException(Exception):
 
         if self.log_message is not None:
             logger.error(f"Log Message: {self.log_message}")
-
-
 
     def to_response(self) -> dict:
         """
@@ -98,6 +97,23 @@ class APIException(Exception):
             "message": self.message,
             "description": self.description
         }
+
+    def to_rf7807_response(self) -> RFC7807ResponseModel:
+        """
+        Converts the exception to a response dictionary.
+        Useful for returning standardized JSON responses in an API.
+
+        Returns:
+        --------
+        dict: A dictionary containing the error_code, status, message, and description.
+        """
+        return RFC7807ResponseModel(
+            type=self.rfc7807_type,
+            instance=self.rfc7807_instance,
+            title=self.message,
+            status=self.http_status_code,
+            detail=self.description
+        )
 
     def to_response_model(self,
                           data=None) -> ResponseModel:

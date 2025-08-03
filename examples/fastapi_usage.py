@@ -22,7 +22,7 @@ class CustomExceptionCode(BaseExceptionCode):
     INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
     PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
     VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
-    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
+    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")
 
 
 class UserResponse(BaseModel):

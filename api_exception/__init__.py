@@ -5,13 +5,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
+from enums.response_scheme import ResponseFormat
 from .logger import logger, add_file_handler
 from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode
 from schemas.response_model import ResponseModel
 from .response_utils import APIResponse
 import traceback
-
 
 __all__ = [
     "DEFAULT_HTTP_CODES",
@@ -29,10 +29,11 @@ __all__ = [
 
 
 def register_exception_handlers(app: FastAPI,
-                                use_response_model: bool = True,
+                                response_format: ResponseFormat = ResponseFormat.RESPONSE_MODEL,
                                 use_fallback_middleware: bool = True,
                                 log_traceback: bool = True,
-                                log_traceback_unhandled_exception: bool = True):
+                                log_traceback_unhandled_exception: bool = True,
+                                include_null_data_field_in_openapi: bool = True):
     """
     Attach APIException and fallback handlers to a FastAPI app.
 
@@ -50,15 +51,18 @@ def register_exception_handlers(app: FastAPI,
     ----------
     app : FastAPI
         The FastAPI application instance.
-    use_response_model : bool, default=True
-        If True, uses the ResponseModel schema for error responses.
-        If False, returns plain dictionaries.
+    response_format : ResponseFormat, default=ResponseFormat.RESPONSE_MODEL
+        If ResponseFormat.RESPONSE_MODEL, Return error responses using the standard internal response model.
+        If ResponseFormat.RFC7807, Return error responses using the RFC 7807 (Problem Details for HTTP APIs) format.
+        If ResponseFormat.RESPONSE_DICTIONARY, returns plain dictionaries.
     use_fallback_middleware : bool, default=True
         If True, catches ALL unhandled exceptions (runtime errors, etc.) and logs them.
     log_traceback : bool, default=True
         If True, logs traceback for APIException errors.
     log_traceback_unhandled_exception : bool, default=True
         If True, logs traceback for unhandled runtime exceptions.
+    include_null_data_field_in_openapi : bool, default=True
+        If True, this flag ensures that OpenAPI (Swagger) documentation includes `null` as a valid value for nullable fields in response schemas.
     Examples
     --------
     **1️⃣ Basic usage (default setup):**
@@ -121,8 +125,10 @@ def register_exception_handlers(app: FastAPI,
         use_response_model=True,
         use_fallback_middleware=True,
         log_traceback=True,
-        log_traceback_unhandled_exception=False  # Don't log tracebacks for runtime errors and/or
+        log_traceback_unhandled_exception=False,  # Don't log tracebacks for runtime errors and/or
                                                  #  any uncaught errors(db error, 3rd party etc.) (just the message)
+        include_null_data_field_in_openapi=False, # Don't show null variables in OpenAPI(Swagger)
+        rfc7807_errors=False # Don't follow RFC 7807 standard in error responses
     )
 
     # Set logger level to WARNING for cleaner production logs
@@ -139,8 +145,10 @@ def register_exception_handlers(app: FastAPI,
             tb = traceback.format_exc()
             logger.error(f"Traceback:\n{tb}")
 
-        if use_response_model:
+        if response_format == ResponseFormat.RESPONSE_MODEL:
             content = exc.to_response_model().model_dump(exclude_none=False)
+        elif response_format == ResponseFormat.RFC7807:
+            content = exc.to_rf7807_response().model_dump(exclude_none=False)
         else:
             content = exc.to_response()
         return JSONResponse(
@@ -165,7 +173,6 @@ def register_exception_handlers(app: FastAPI,
                     description=description,
                 ).model_dump(exclude_none=False),
             )
-
 
         @app.middleware("http")
         async def fallback_exception_middleware(request: Request,
@@ -218,3 +225,52 @@ def register_exception_handlers(app: FastAPI,
                         description="An unexpected error occurred. Please try again later."
                     ).model_dump(exclude_none=False)
                 )
+    if include_null_data_field_in_openapi:
+        """
+        Custom OpenAPI schema generator that injects `data: null` into example error responses
+        to ensure consistent response shape across all status codes.
+
+        When `openapi_show_null_in_responses` is enabled, this function checks all non-200 
+        responses in the OpenAPI schema. If the example response includes the standard 
+        error fields (`status`, `message`, `description`, `error_code`) but lacks `data`,
+        it injects `"data": null` into the example.
+
+        This helps maintain compatibility with clients that expect a fixed response schema,
+        especially when using typed SDKs or schema validators.
+
+        The modified schema is cached in `app.openapi_schema` to prevent regeneration.
+        """
+        def openapi():
+            # If the OpenAPI schema has not yet been generated
+            if not app.openapi_schema:
+                # Call the original OpenAPI generator
+                schema = app.openapi_super()
+                paths = schema.get("paths")
+                # Iterate through all defined paths in the schema
+                for path_k, path_v in paths.items():
+                    # Iterate through all HTTP methods (get, post, etc.) for each path
+                    for method_k, method_v in path_v.items():
+                        if "responses" in method_v:
+                            # Iterate through all response codes for this method
+                            for response_k, response_v in method_v['responses'].items():
+                                if response_k == '200':
+                                    # Skip 200 OK responses — we only care about errors
+                                    continue
+                                if 'content' in response_v:
+                                    # Iterate through different media types (e.g., application/json)
+                                    for content_k, content_v in response_v['content'].items():
+                                        if 'example' in content_v:
+                                            example = content_v['example']
+                                            # If this is an error response missing the 'data' field,
+                                            # inject `"data": null` to ensure schema consistency
+                                            if 'status' in example and 'message' in example and 'description' in example and 'error_code' in example and 'data' not in example:
+                                                example['data'] = None
+                # Cache the modified schema
+                app.openapi_schema = schema
+            return app.openapi_schema
+
+        # Save the original OpenAPI generator
+        app.openapi_super = app.openapi
+
+        # Override FastAPI’s OpenAPI generator with the patched version
+        app.openapi = openapi
