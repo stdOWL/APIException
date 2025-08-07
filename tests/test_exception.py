@@ -8,8 +8,11 @@ from api_exception import (
     ExceptionStatus,
     ResponseModel,
     register_exception_handlers,
-    set_default_http_codes
+    set_default_http_codes,
+    APIResponse,
 )
+from custom_enum.enums import ResponseFormat
+from examples.fastapi_usage import CustomExceptionCode
 
 
 class TestAPIException(unittest.TestCase):
@@ -48,6 +51,15 @@ class TestAPIException(unittest.TestCase):
         response_model = exception.to_response_model()
         self.assertEqual(response_model.status, ExceptionStatus.FAIL)
         self.assertEqual(response_model.message, "Incorrect username and password.")
+
+    def test_api_exception_to_rfc7807_response(self):
+        exception = APIException(error_code=ExceptionCode.AUTH_LOGIN_FAILED)
+        response_model = exception.to_rfc7807_response()
+        self.assertEqual(response_model.detail, "Failed authentication attempt.")
+        self.assertEqual(response_model.instance, "/login")
+        self.assertEqual(response_model.title, "Incorrect username and password.")
+        self.assertEqual(response_model.type, "https://example.com/problems/authentication-error")
+        self.assertEqual(response_model.status, 400)
 
     def test_response_model_success(self):
         response = ResponseModel(data={"key": "value"})
@@ -95,7 +107,7 @@ class TestAPIException(unittest.TestCase):
 
     def test_register_exception_handlers_raw_response(self):
         app = FastAPI()
-        register_exception_handlers(app, use_response_model=False)
+        register_exception_handlers(app, response_format=ResponseFormat.RESPONSE_DICTIONARY)
 
         @app.get("/test-raw")
         def test_endpoint():
@@ -106,6 +118,127 @@ class TestAPIException(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["error_code"], "AUTH-1000")
         self.assertIn("message", response.json())
+
+    def test_register_exception_handlers_rfc7807_response(self):
+        app = FastAPI()
+        register_exception_handlers(app, response_format=ResponseFormat.RFC7807)
+
+        @app.get("/test-rfc7807")
+        def test_endpoint():
+            raise APIException(error_code=ExceptionCode.AUTH_LOGIN_FAILED)
+
+        client = TestClient(app)
+        response = client.get("/test-rfc7807")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["type"], "https://example.com/problems/authentication-error")
+        self.assertEqual(response.json()["instance"], "/login")
+        self.assertEqual(response.json()["title"], "Incorrect username and password.")
+        self.assertEqual(response.json()["detail"], "Failed authentication attempt.")
+        self.assertEqual(response.json()["status"], 400)
+        self.assertEqual(response.headers.get("content-type", None), "application/problem+json")
+
+    def test_register_exception_handlers_model_response(self):
+        app = FastAPI()
+        register_exception_handlers(app, response_format=ResponseFormat.RESPONSE_MODEL)
+
+        @app.get("/test-response")
+        def test_endpoint():
+            raise APIException(error_code=ExceptionCode.AUTH_LOGIN_FAILED)
+
+        client = TestClient(app)
+        response = client.get("/test-response")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["error_code"], "AUTH-1000")
+
+    def test_openapi(self):
+        app = FastAPI()
+        register_exception_handlers(app, response_format=ResponseFormat.RESPONSE_MODEL)
+
+        @app.get("/test-openapi", responses=APIResponse.rfc7807(
+            (401, CustomExceptionCode.INVALID_API_KEY, "https://example.com/errors/unauthorized", "/account/info"),
+            (403, CustomExceptionCode.PERMISSION_DENIED, "https://example.com/errors/forbidden", "/admin/panel"),
+            (422, CustomExceptionCode.VALIDATION_ERROR, "https://example.com/errors/unprocessable-entity",
+             "/users/create")
+        ))
+        def test_endpoint():
+            raise APIException(error_code=ExceptionCode.AUTH_LOGIN_FAILED)
+
+        expected = {
+            "200": {
+                "description": "Successful Response",
+                "content": {
+                    "application/json": {
+                        "schema": {}
+                    }
+                }
+            },
+            "401": {
+                "description": "Status: 401 - API-401",
+                "content": {
+                    "application/problem+json": {
+                        "example": {
+                            "type": "https://example.com/errors/unauthorized",
+                            "title": "Invalid API key.",
+                            "status": 401,
+                            "detail": "Provide a valid API key.",
+                            "instance": "/account/info"
+                        }
+                    }
+                }
+            },
+            "403": {
+                "description": "Status: 403 - PERM-403",
+                "content": {
+                    "application/problem+json": {
+                        "example": {
+                            "type": "https://example.com/errors/forbidden",
+                            "title": "Permission denied.",
+                            "status": 403,
+                            "detail": "Access to this resource is forbidden.",
+                            "instance": "/admin/panel"
+                        }
+                    }
+                }
+            },
+            "422": {
+                "description": "Status: 422 - VAL-422",
+                "content": {
+                    "application/problem+json": {
+                        "example": {
+                            "type": "https://example.com/errors/unprocessable-entity",
+                            "title": "Validation Error",
+                            "status": 422,
+                            "detail": "Input validation failed.",
+                            "instance": "/users/create"
+                        }
+                    }
+                }
+            }
+        }
+        client = TestClient(app)
+        response = client.get("/openapi.json").json()
+        responses = response.get("paths").get("/test-openapi").get("get").get("responses")
+
+        for code, expected_response in expected.items():
+            with self.subTest(code=code):
+                self.assertIn(code, responses)
+                actual = responses[code]
+
+                # Check description
+                self.assertEqual(actual["description"], expected_response["description"])
+
+                # Check example or schema
+                expected_content = expected_response["content"]["application/json"] if "application/json" in expected_response["content"] else expected_response["content"]["application/problem+json"]
+                actual_content = actual["content"]["application/json"] if "application/json" in actual["content"] else actual["content"]["application/problem+json"]
+
+                if "schema" in expected_content:
+                    self.assertIn("schema", actual_content)
+                    self.assertEqual(actual_content["schema"], expected_content["schema"])
+                else:
+                    self.assertIn("example", actual_content)
+                    for key, val in expected_content["example"].items():
+                        self.assertIn(key, actual_content["example"])
+                        self.assertEqual(actual_content["example"][key], val)
 
     def test_fallback_handler(self):
         app = FastAPI()

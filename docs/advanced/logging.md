@@ -4,13 +4,13 @@ Good exception handling is only half the battle — **logging** is what keeps yo
 
 With APIException, unexpected errors don’t just return a nice JSON response;
 
-they’re also **automatically logged** so you always have a clear trail of what went wrong.
+they’re also **automatically logged** so you always have a clear trail of what went wrong — and when needed, you can also **log manually** using the built-in logger for custom events or diagnostics.
 
 ---
 
 ## ✅ How It Works
 
-When you use:
+**Auto-logging:**
 ```python
 from APIException import register_exception_handlers
 from fastapi import FastAPI
@@ -20,7 +20,6 @@ register_exception_handlers(
     app=app,
     use_fallback_middleware=True
 )
-
 ```
 You get two powerful behaviors:
 
@@ -35,13 +34,33 @@ You get two powerful behaviors:
 - The full traceback to your console or logging system
 
 
+**Manual-Logging:**
+
+
+If you want to log your own events (not just exceptions), you can use the built-in logger:
+
+```python
+from api_exception.logger import logger
+logger.warning("This will be logged to both console and file")
+logger.info("This INFO log will also be written to the file"
+```
+Also you can call add_file_handler to write log to file
+```python
+from api_exception.logger import add_file_handler,logger
+add_file_handler("api_exception.log", level=logging.DEBUG)
+logger.warning("This will be logged to both console and file")
+```
 ---
 
 ## ⚙️ Example Output
 
+When an exception happened, you’ll see logs like:
+
+![Log-Format](exception_1.png)
+
 When something unexpected happens, you’ll see logs like:
 
-![Log-Format](img_2.png)
+![Log-Unhandled-Format](exception_2.png)
 
 ---
 

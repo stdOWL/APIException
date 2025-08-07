@@ -14,15 +14,28 @@ register_exception_handlers(app)
 
 
 '''
-Custom Exception Class that you can define in your code to make the backend responses look more standardized.
-Just extend the `BaseExceptionCode` and use it. 
+Custom Exception Class that you can define in your code to make backend error responses standardized and predictable.
+
+To use:
+- Extend the `BaseExceptionCode` class
+- Define constants as tuples with the following structure:
+
+    (
+        error_code: str,
+        message: str,
+        description: Optional[str],
+        rfc7807_type: Optional[str],
+        rfc7807_instance: Optional[str]
+    )
 '''
+
+
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
     INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
     PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
     VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
-    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
+    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")
 
 
 class UserResponse(BaseModel):

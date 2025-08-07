@@ -33,7 +33,7 @@ def add_file_handler(path: str, level=logging.INFO):
     >>> from api_exception.logger import add_file_handler, logger
     >>> add_file_handler("api_exception.log", level=logging.DEBUG)
     >>> logger.warning("This will be logged to both console and file")
-    >>> logger.info("This INFO log will also be written to the file")
+    >>> logger.info("This INFO log will also be written to the file"
     """
     file_handler = logging.FileHandler(path)
     file_handler.setLevel(level)
