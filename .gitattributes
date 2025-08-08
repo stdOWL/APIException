@@ -1,2 +1,13 @@
 docs/** linguist-documentation
 assets/** linguist-vendored
+
+benchmark/*report.html linguist-generated
+benchmark/**/*.html    linguist-generated
+
+assets/**        linguist-vendored
+**/*.png         linguist-vendored
+**/*.jpg         linguist-vendored
+**/*.jpeg        linguist-vendored
+**/*.gif         linguist-vendored
+**/*.svg         linguist-vendored
+**/*.webp        linguist-vendored
