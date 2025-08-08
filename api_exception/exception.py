@@ -1,4 +1,6 @@
+import json
 import traceback
+from typing import Union
 
 from schemas.rfc7807_model import RFC7807ResponseModel
 from .logger import logger
@@ -32,7 +34,7 @@ class APIException(Exception):
                  message: str = None,
                  description: str = None,
                  log_exception: bool = True,
-                 log_message: str = None):
+                 log_message: Union[str | dict] = None):
         """
         Initializes an APIException with a specific error code, HTTP status, and optional message and description.
 
@@ -62,7 +64,7 @@ class APIException(Exception):
         self.status = status
         self.http_status_code = http_status_code or DEFAULT_HTTP_CODES.get(status, 400)
         self.log_exception = log_exception
-        self.log_message = log_message
+        self.log_message = log_message                  # If you want to add more log message. It can be dict or str.
         self.rfc7807_type = error_code.rfc7807_type
         self.rfc7807_instance = error_code.rfc7807_instance
 
@@ -81,7 +83,12 @@ class APIException(Exception):
             f"Code: {self.error_code}, Status: {self.status}, Message: {self.message}, Description: {self.description}")
 
         if self.log_message is not None:
-            logger.error(f"Log Message: {self.log_message}")
+            if isinstance(self.log_message, str):
+                logger.error(f"Log Message: {self.log_message}")
+            elif isinstance(self.log_message, dict):
+                logger.error(f"Log Message: {json.dumps(self.log_message)}")
+
+
 
 
 
