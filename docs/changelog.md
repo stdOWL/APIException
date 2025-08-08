@@ -3,6 +3,15 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
+## [v0.1.17] - 2025-08-22
+
+- RFC 7807 standard support for consistent error responses (`application/problem+json`)
+
+- OpenAPI (Swagger) schema consistency: nullable fields are now explicitly shown for better compatibility
+
+- Documentation has been updated.    
+
+- Readme.md has been updated. 
 
 ## [v0.1.16] - 2025-07-22
 
