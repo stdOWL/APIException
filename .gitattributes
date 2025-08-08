@@ -1,2 +1,2 @@
-docs/** linguist-vendored
-site/** linguist-vendored
+docs/** linguist-documentation
+assets/** linguist-vendored
