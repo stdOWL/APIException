@@ -11,7 +11,7 @@ Download the package from PyPI and install it using pip:
 pip install apiexception
 ```
 
-![Installing the APIException for FastAPI](pip-install-apiexception-1.gif)
+![Installing the APIException for FastAPI](assets/pip-install-apiexception-1.gif)
 
 
 Just import the `register_exception_handlers` function from `APIException` and call it with your FastAPI app instance to set up global exception handling:

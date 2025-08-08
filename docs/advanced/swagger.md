@@ -75,6 +75,7 @@ from api_exception import APIResponse
 ```
 
 ![APIResponse.rfc7807()](img_2.png)
+
 Want to go deeper? Read the [RFC 7807 Standard](rfc7807.md)
 
 ---
