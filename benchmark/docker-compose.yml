@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  control_app:
+    build:
+      context: .
+      dockerfile: control_app/Dockerfile
+    ports:
+      - "8001:8000"
+
+  test_app:
+    build:
+      context: .
+      dockerfile: test_app/Dockerfile
+    ports:
+      - "8002:8000"
+
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - .:/mnt
+    command: -f /mnt/locustfile.py --headless -u 200 -r 10 --run-time 2m --html /mnt/report.html
+    depends_on:
+      - test_app
+      - control_app
