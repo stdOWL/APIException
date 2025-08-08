@@ -4,6 +4,10 @@ assets/** linguist-vendored
 benchmark/*report.html linguist-generated
 benchmark/**/*.html    linguist-generated
 
+benchmark/**/Dockerfile linguist-generated
+benchmark/**/docker-compose*.yml linguist-generated
+benchmark/**/docker-compose*.yaml linguist-generated
+
 assets/**        linguist-vendored
 **/*.png         linguist-vendored
 **/*.jpg         linguist-vendored
