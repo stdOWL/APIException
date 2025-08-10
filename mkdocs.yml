@@ -87,6 +87,7 @@ nav:
   - 🚀 Installation: installation.md
   - ⚡ Quick Start: usage/quick_start.md
   - 🧩 Usage:
+      - register_exception_handlers: usage/register_exception_handlers.md
       - Response Model: usage/response_model.md
       - Custom Exception Codes: usage/custom_codes.md
       - Fallback Middleware: usage/fallback.md

@@ -5,7 +5,10 @@ A **clean, predictable response structure** is the heart of a stable API.
 The `ResponseModel` in **APIException** makes sure every success **and** error response always has the same JSON format — easy to document, easy to parse, and friendly for frontend teams.
 
 
-![response_model.gif](apiexception-responseModel.gif)
+
+<video autoplay loop muted playsinline width="900">
+  <source src="../apiexception-responseModel.mp4" type="video/mp4">
+</video>
 
 
 ---
@@ -110,8 +113,9 @@ async def check_api_key(api_key: str):
 ```
 
 
-![error_case_response.gif](apiexception-responseModelInvalidKey.gif)
-
+<video autoplay loop muted playsinline width="900">
+  <source src="../apiexception-responseModelInvalidKey.mp4" type="video/mp4">
+</video>
 
 
 

@@ -64,9 +64,11 @@ async def user(user_id: int = Path()):
         description="User found and returned."
     )
 ```
-The below gif demonstrates what actually the example code does.
+The below video demonstrates what actually the example code does.
 
-![apiexception-indexBasicUsage.gif](../assets/apiexception-indexBasicUsage.mp4)
+<video autoplay loop muted playsinline width="900">
+  <source src="../apiexception-indexBasicUsage.mp4" type="video/mp4">
+</video>
 
 
 
