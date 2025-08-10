@@ -314,10 +314,36 @@ from api_exception import logger
 
 logger.info("Custom info log")
 logger.error("Custom error log")
+logger.setLevel("DEBUG")  # Set logging level
 ```
 
 ---
 
+
+
+## Examples
+
+### All in One Example Application
+Below is a comprehensive example application demonstrating the capabilities of `api_exception`.  
+This single file showcases how you can:
+
+- Work with multiple FastAPI apps (**API**, **Mobile**, **Admin**) in the same project  
+- Set different log levels based on the environment (e.g., **INFO** in dev, **ERROR** in prod)  
+- Enable or disable **tracebacks** per application  
+- Fully control logging behavior when raising `APIException` (**log** or **skip logging**)  
+- Customize `DEFAULT_HTTP_CODES` to match your own status code mappings  
+- Create and use **custom exception classes** with clean and consistent logging across the project  
+- Use `APIResponse.custom()` and `APIResponse.default()` for flexible response structures  
+- Demonstrate **RFC 7807 problem details** integration for standards-compliant error responses  
+
+This example serves as a **one-stop reference** to see how `api_exception` can be integrated into a real-world project while keeping exception handling **consistent**, **configurable**, and **developer-friendly**.  
+
+[**Click to see the example**](https://github.com/akutayural/APIException/blob/main/examples/production_level.py)
+
+
+
+
+---
 ## ✅ Testing Example
 
 ```python

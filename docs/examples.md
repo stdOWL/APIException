@@ -15,7 +15,7 @@ This single file showcases how you can:
 
 This example serves as a **one-stop reference** to see how `api_exception` can be integrated into a real-world project while keeping exception handling **consistent**, **configurable**, and **developer-friendly**.  
 
-The below example can be found: [**View on GitHub**](https://github.com/akutayural/APIException/examples/production_level.py)
+The below example can be found: [**View on GitHub**](https://github.com/akutayural/APIException/blob/main/examples/production_level.py)
 
 ```python
 import os
