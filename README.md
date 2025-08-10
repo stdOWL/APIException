@@ -35,7 +35,7 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 pip install apiexception
 ```
 
-![pip-install-apiexception-1.gif](assets/pip-install-apiexception-1.gif)
+![pip-install-apiexception-1.gif](docs/assets/apiexception-indexPipInstallApiexception.gif)
 
 ---
 
@@ -77,16 +77,11 @@ class UserResponse(BaseModel):
 # Define your custom exception codes extending BaseExceptionCode
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
-    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
-    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
 
-
+    
 @app.get("/user/{user_id}",
     response_model=ResponseModel[UserResponse],
-    responses=APIResponse.custom(
-        (401, CustomExceptionCode.INVALID_API_KEY),
-        (403, CustomExceptionCode.PERMISSION_DENIED)
-    )
+    responses=APIResponse.default()
 )
 async def user(user_id: int = Path()):
     if user_id == 1:
@@ -94,6 +89,11 @@ async def user(user_id: int = Path()):
             error_code=CustomExceptionCode.USER_NOT_FOUND,
             http_status_code=401,
         )
+    if user_id == 3:
+        a=1
+        b=0
+        c = a / b  # This will raise a ZeroDivisionError
+        return c
     data = UserResponse(id=1, username="John Doe")
     return ResponseModel[UserResponse](
         data=data,
@@ -101,10 +101,35 @@ async def user(user_id: int = Path()):
     )
 ```
 
-![_user_{user_id}.gif](_user_{user_id}.gif)
+![_user_{user_id}.gif](/assets/apiexception-indexBasicUsage-1.gif)
 
 ---
 
+
+In both `error` and the `success` cases, the response structure is **consistent**.
+
+- In the example above, when the `user_id` is `1`, it raises an `APIException` with a custom `error_code`, the response is formatted according to the `ResponseModel` and it's logged **automatically** as shown below:
+
+![apiexception-indexApiExceptionLog.png](docs/assets/apiexception-indexApiExceptionLog.png)
+
+
+#### - Uncaught Exception API Response?
+
+What if you forget to handle an exception such as in the [**example**](#see-it-in-action) above?
+
+- When the `user_id` is `3`, the program automatically catches the `ZeroDivisionError` and returns a standard error response, logging it in a **clean structure** as shown below:
+
+```json
+{
+  "data": null,
+  "status": "FAIL",
+  "message": "Something went wrong.",
+  "error_code": "ISE-500",
+  "description": "An unexpected error occurred. Please try again later."
+}
+```
+
+![apiexception-indexApiExceptionLog.png](docs/assets/apiexception-indexZeroDivisionLog.png)
 
 
 **2️⃣ Raise an Exception**
@@ -259,6 +284,38 @@ python -m unittest discover -s tests
 Find detailed guides and examples in the [official docs](https://akutayural.github.io/APIException/).
 
 ---
+## 📊 Benchmark
+
+We benchmarked **apiexception's** `APIException` against **FastAPI's** built-in `HTTPException` using **Locust** with **200** concurrent users over **2 minutes**.
+This can be used as a foundation. Can be extended to include more detailed tests. 
+
+| Metric                    | HTTPException (Control App) | APIException (Test App) |
+|---------------------------|-----------------------------|-------------------------|
+| Avg Latency               | **2.00 ms**                 | 2.72 ms                 |
+| P95 Latency               | 5 ms                        | 6 ms                    |
+| P99 Latency               | **9 ms**                    | 19 ms                   |
+| Max Latency               | **44 ms**                   | 96 ms                   |
+| Requests per Second (RPS) | ~608.88                     | ~608.69                 |
+| Failure Rate (`/error`)   | 100% (intentional)          | 100% (intentional)      |
+
+**Analysis**  
+- Both implementations achieved almost identical throughput (~609 RPS).  
+- In this test, APIException’s **average latency was only +0.72 ms** higher than HTTPException (2.42 ms vs 2.00 ms).  
+- **The P95 latencies** were nearly identical at 5 ms and 6 ms, while **the P99** and **maximum latencies** for APIException were slightly higher but still well within acceptable performance thresholds for APIs.
+> `Important Notice:` `APIException` automatically logs exceptions, while FastAPI’s built-in `HTTPException` does not log them by default.
+> Considering the extra **logging feature**, these performance results are **very strong**, showing that APIException delivers standardized error responses, cleaner exception handling, and logging capabilities **without sacrificing scalability**.
+
+
+<figure style="margin: 0; text-align: center;">
+  <img src="docs/assets/APIException-vs-HTTPException–Latency-Comparison.png" alt="APIException vs HTTPException – Latency Comparison" style="display: block; margin: 0 auto;">
+  <figcaption style="margin-top: 4px; font-style: italic; font-size: 0.9em;">
+    HTTPException vs APIException – Latency Comparison
+  </figcaption>
+</figure>
+
+Benchmark scripts and raw Locust reports are available in the [benchmark](https://github.com/akutayural/APIException/tree/main/benchmark) directory.
+
+
 
 ## 📜 Changelog
 
@@ -376,13 +433,11 @@ If you like this library and find it useful, don’t forget to give it a ⭐ on 
 
 ## Contact
 If you have any questions or suggestions, please feel free to reach out at [ahmetkutayural.dev](https://ahmetkutayural.dev/#contact)
+Don't forget to add your email to the contact form! 
 
 ---
 
 ## 📖 Learn More
-
-📰 **Read the full article** explaining the motivation, features, and examples:  
-👉 [Tired of Messy FastAPI Responses? Standardise Them with APIException](https://medium.com/@ahmetkutayural/tired-of-messy-fastapi-responses-standardise-them-with-apiexception-528b92f5bc4f)
 
 📚 **Full APIException Documentation**  
 https://akutayural.github.io/APIException/

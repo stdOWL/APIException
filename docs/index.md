@@ -297,7 +297,7 @@ So, this library:
 
 ## 📊 Benchmark
 
-We benchmarked **apiexception's** `APIException` against **FastAPI's** built-in `HTTPException` using **Locust** with **1,000** concurrent users over **2 minutes**.  
+We benchmarked **apiexception's** `APIException` against **FastAPI's** built-in `HTTPException` using **Locust** with **200** concurrent users over **2 minutes**.  
 Both apps received the same traffic mix (≈75% `/ok`, ≈25% `/error`).
 
 | Metric                    | HTTPException (Control App) | APIException (Test App) |
