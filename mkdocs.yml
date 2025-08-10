@@ -93,5 +93,6 @@ nav:
   - 📚 Advanced:
       - Swagger Integration: advanced/swagger.md
       - Logging & Debug: advanced/logging.md
+      - RFC Integration: advanced/rfc7807.md
   - 🔗 API Reference: reference/api.md
   - 📝 Changelog: changelog.md
