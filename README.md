@@ -44,7 +44,7 @@ pip install apiexception
 **1️⃣ Register the Handler**
 
 ```python
-from apiexception import register_exception_handlers
+from api_exception import register_exception_handlers
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -60,7 +60,7 @@ register_exception_handlers(app)  # uses ResponseModel by default
 
 ```python
 from fastapi import FastAPI, Path
-from apiexception import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+from api_exception import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -110,7 +110,7 @@ async def user(user_id: int = Path()):
 **2️⃣ Raise an Exception**
 
 ```python
-from APIException import APIException, ExceptionCode, register_exception_handlers
+from api_exception import APIException, ExceptionCode, register_exception_handlers
 from fastapi import FastAPI
 app = FastAPI()
 
@@ -131,7 +131,7 @@ async def login(username: str, password: str):
 **3️⃣ Use ResponseModel for Success Responses**
 
 ```python
-from APIException import ResponseModel, register_exception_handlers
+from api_exception import ResponseModel, register_exception_handlers
 from fastapi import FastAPI
 app = FastAPI()
 
@@ -158,7 +158,7 @@ async def success():
 Always extend BaseExceptionCode — don’t subclass ExceptionCode directly!
 
 ```python
-from APIException import BaseExceptionCode
+from api_exception import BaseExceptionCode
 
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "User does not exist.")
@@ -168,7 +168,7 @@ class CustomExceptionCode(BaseExceptionCode):
 And use it:
 
 ```python
-from APIException import APIException
+from api_exception import APIException
 
 raise APIException(
     error_code=CustomExceptionCode.USER_NOT_FOUND,
@@ -181,7 +181,7 @@ raise APIException(
 ## ⚙️ Override Default HTTP Status Codes
 
 ```python
-from APIException import set_default_http_codes
+from api_exception import set_default_http_codes
 
 set_default_http_codes({
     "FAIL": 422,
@@ -194,7 +194,7 @@ set_default_http_codes({
 ## 🌐 Multiple Apps Support
 ```python
 from fastapi import FastAPI
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 
 mobile_app = FastAPI()
 admin_app = FastAPI()
@@ -218,7 +218,7 @@ Every APIException automatically logs:
 Or use the built-in logger:
 
 ```python
-from APIException import logger
+from api_exception import logger
 
 logger.info("Custom info log")
 logger.error("Custom error log")
@@ -230,7 +230,7 @@ logger.error("Custom error log")
 
 ```python
 import unittest
-from APIException import APIException, ExceptionCode, ResponseModel
+from api_exception import APIException, ExceptionCode, ResponseModel
 
 class TestAPIException(unittest.TestCase):
     def test_api_exception(self):
@@ -261,6 +261,34 @@ Find detailed guides and examples in the [official docs](https://akutayural.gith
 ---
 
 ## 📜 Changelog
+
+**v0.1.17 (2025-08-11)**
+
+✅ **Initial stable version**
+
+- `RFC 7807` standard support for consistent error responses (`application/problem+json`)
+
+- OpenAPI (Swagger) schema consistency: nullable fields are now explicitly shown for better compatibility
+
+- `Poetry` support has been added for dependency management
+
+- `uv` support has been added.
+
+- extra logger message param has been added to `APIException` for more detailed logging
+
+- `log_traceback` and `log_traceback_unhandled_exception` parameters have been added to `register_exception_handlers()` for more control over logging behavior
+
+- `log_exception` parameter has been added to `APIException` for more control over logging behavior
+
+- `log_message` parameter has been added to `APIException` for more control over logging behavior
+
+- Logging now uses `add_file_handler()` to write logs to a file
+
+- Logging improvements: now includes exception arguments in logs for better debugging
+
+- Documentation has been updated.    
+
+- Readme.md has been updated. 
 
 **v0.1.16 (2025-07-22)**
 

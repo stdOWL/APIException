@@ -3,19 +3,36 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
-## [v0.1.17] - 2025-08-22
+## [v0.1.17] - 2025-08-11
 
-- RFC 7807 standard support for consistent error responses (`application/problem+json`)
+✅ **Initial stable version**
+
+- `RFC 7807` standard support for consistent error responses (`application/problem+json`)
 
 - OpenAPI (Swagger) schema consistency: nullable fields are now explicitly shown for better compatibility
+
+- `Poetry` support has been added for dependency management
+
+- `uv` support has been added.
+
+- extra logger message param has been added to `APIException` for more detailed logging
+
+- `log_traceback` and `log_traceback_unhandled_exception` parameters have been added to `register_exception_handlers()` for more control over logging behavior
+
+- `log_exception` parameter has been added to `APIException` for more control over logging behavior
+
+- `log_message` parameter has been added to `APIException` for more control over logging behavior
+
+- Logging now uses `add_file_handler()` to write logs to a file
+
+- Logging improvements: now includes exception arguments in logs for better debugging
 
 - Documentation has been updated.    
 
 - Readme.md has been updated. 
 
-## [v0.1.16] - 2025-07-22
 
-✅ **Initial stable version**
+## [v0.1.16] - 2025-07-22
 
 - setup.py has been updated.
 

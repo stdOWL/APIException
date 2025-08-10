@@ -16,7 +16,7 @@ A generic, strongly-typed Pydantic model that standardizes all API responses.
 - ✅ Where to import:
 
 ```python
-from APIException import ResponseModel
+from api_exception import ResponseModel
 ```
 
 - ✅ Key Fields:
@@ -43,7 +43,7 @@ Your main custom exception class — use this to raise predictable, documented A
 - ✅ Where to import:
 
 ```python
-from APIException import APIException
+from api_exception import APIException
 ```
 
 - ✅ Key Args:
@@ -63,7 +63,7 @@ Base class for defining your custom business exception codes.
 - ✅ Where to import:
 
 ```python
-from APIException import BaseExceptionCode
+from api_exception import BaseExceptionCode
 ```
 
 ---
@@ -74,7 +74,7 @@ A helper to document your Swagger/OpenAPI responses easily.
 
 - ✅ Where to import:
 ```python
-from APIException import APIResponse
+from api_exception import APIResponse
 ```
 
 - ✅ Usage:
@@ -93,16 +93,8 @@ Sets up global handlers to catch APIException and unexpected errors.
 
 - ✅ Where to import:
 ```python
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 ```
-
-- ✅ Key Options:
-
-	•	`use_response_model`: bool (default True) |
-Return responses using `ResponseModel`.
-
-    •	`use_fallback_middleware`: bool (default True) |
-Catch unhandled exceptions and return a consistent fallback.
 
 
 ## ⚡ Example
@@ -110,7 +102,7 @@ Catch unhandled exceptions and return a consistent fallback.
 Here’s how a typical setup might look:
 
 ```python
-from APIException import (
+from api_exception import (
     APIException,
     BaseExceptionCode,
     ResponseModel,

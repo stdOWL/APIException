@@ -39,7 +39,7 @@ Every API response includes:
 ```python
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from apiexception import (
+from api_exception import (
     ResponseModel,
     APIResponse,
     APIException,
