@@ -66,7 +66,7 @@ async def user(user_id: int = Path()):
 ```
 The below gif demonstrates what actually the example code does.
 
-![apiexception-indexBasicUsage.gif](../assets/apiexception-indexBasicUsage.gif)
+![apiexception-indexBasicUsage.gif](../assets/apiexception-indexBasicUsage.mp4)
 
 
 

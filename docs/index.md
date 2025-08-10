@@ -119,7 +119,10 @@ async def user(user_id: int = Path()):
 When you run your FastAPI app and open **Swagger UI** (`/docs`),  
 your endpoints will display **clean, predictable response schemas** like this below:
 
-![apiexception-indexBasicUsage.gif](assets/apiexception-indexBasicUsage-1.gif)
+<video autoplay loop muted playsinline width="900">
+  <source src="assets/apiexception-indexBasicUsage-1.mp4" type="video/mp4">
+</video>
+
 
 
 #### - Successful API Response? 
