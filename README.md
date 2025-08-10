@@ -386,7 +386,7 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-**v0.1.17 (2025-08-11)**
+**v0.1.17 (2025-08-10)**
 
 ✅ **Initial stable version**
 
@@ -415,8 +415,6 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 - Readme.md has been updated. 
 
 **v0.1.16 (2025-07-22)**
-
-✅ **Initial stable version**
 
 - setup.py has been updated.
 
