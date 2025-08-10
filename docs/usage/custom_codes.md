@@ -37,16 +37,16 @@ Raise your custom error with full `typing`, `logging`, and `standardized` respon
 from APIException import APIException
 
 raise APIException(
-    error_code=CustomExceptionCode.PERMISSION_DENIED,
+    error_code=CustomExceptionCode.USER_NOT_FOUND,
     http_status_code=403
 )
 ```
 In the above example, if we raise the `APIException()`, the response will look like the below image.
-![403-Permission-Denied](img.png)
+![403-Permission-Denied](../assets/img_2.png)
 
 And it will automatically log the event. Log format can be seen in the below image.
 
-![Log-Format](img_1.png)
+![403-Permission-Denied](../assets/apiexception-indexApiExceptionLog.png)
 
 ### 🏷️ How It Looks in Responses
 

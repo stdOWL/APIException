@@ -44,7 +44,7 @@ pip install apiexception
 **1️⃣ Register the Handler**
 
 ```python
-from APIException import register_exception_handlers
+from apiexception import register_exception_handlers
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -60,7 +60,7 @@ register_exception_handlers(app)  # uses ResponseModel by default
 
 ```python
 from fastapi import FastAPI, Path
-from APIException import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+from apiexception import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
 from pydantic import BaseModel
 
 app = FastAPI()

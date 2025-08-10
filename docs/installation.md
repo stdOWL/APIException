@@ -12,7 +12,7 @@ This will install the latest stable release directly from [PyPI](https://pypi.or
 
 ## ⚡ Install via uv
 
-If you use uv for ultra-fast, isolated installs:
+If you use [uv](https://docs.astral.sh/uv/) for ultra-fast, isolated installs:
 
 ```bash
 uv pip install apiexception
@@ -20,7 +20,7 @@ uv pip install apiexception
 
 ## 🎯 Install via Poetry
 
-If your project uses Poetry:
+If your project uses [Poetry](https://python-poetry.org/docs/):
 ```bash
 poetry add apiexception
 ```
@@ -40,7 +40,7 @@ pip show apiexception
 ```
 
 
-![Installing the APIException for FastAPI](assets/pip-install-apiexception-1.gif)
+![Installing the APIException for FastAPI](assets/apiexception-indexPipInstallApiexception.gif)
 
 ---
 

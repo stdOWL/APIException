@@ -46,8 +46,6 @@ class UserResponse(BaseModel):
 # Define your custom exception codes extending BaseExceptionCode
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
-    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
-    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
 
 
 @app.get("/user/{user_id}",
@@ -68,7 +66,8 @@ async def user(user_id: int = Path()):
 ```
 The below gif demonstrates what actually the example code does.
 
-![Consistent Swagger Responses](_user_{user_id}-quick.gif)
+![apiexception-indexBasicUsage.gif](../assets/apiexception-indexBasicUsage.gif)
+
 
 
 `Swagger UI` will be well structured. 

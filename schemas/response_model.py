@@ -28,7 +28,7 @@ class ResponseModel(BaseModel, Generic[DataT]):
         Optional detailed description of the response. Defaults to `None`, but can provide more context in success/error responses.
         In abstract, server response detail.
 
-    Usage [Skip Reading This Part If You Are Not A Developing the Backend]:
+    Usage [Skip Reading This Part If You Are Not Developing the Backend]:
     ------
     This model can be used to standardize API responses in FastAPI applications. It allows for a consistent structure across successful and error responses, making it easier for clients to handle responses uniformly.
 

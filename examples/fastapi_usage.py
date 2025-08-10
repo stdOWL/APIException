@@ -1,3 +1,61 @@
+from fastapi import FastAPI
+from api_exception import (
+    ResponseModel,
+    register_exception_handlers,
+    APIResponse,
+    APIException,
+    ExceptionStatus,
+    BaseExceptionCode
+)
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+register_exception_handlers(app)
+
+'''
+Custom Exception Class that you can define in your code to make the backend responses look more standardized.
+Just extend the `BaseExceptionCode` and use it. 
+'''
+class CustomExceptionCode(BaseExceptionCode):
+    USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
+    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
+    VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
+    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
+
+
+
+class ApiKeyModel(BaseModel):
+    api_key: str = Field(..., example="b2013852-1798-45fc-9bff-4b6916290f5b", description="Api Key.")
+
+
+@app.get(
+    "/apikey",
+    response_model=ResponseModel[ApiKeyModel],
+    responses=APIResponse.default()
+)
+async def check_api_key(api_key: str):
+    if api_key != "valid_key":
+        raise APIException(
+            error_code=CustomExceptionCode.INVALID_API_KEY,
+            http_status_code=401,
+        )
+    data = ApiKeyModel(api_key="valid_key")
+    return ResponseModel(
+        data=data,
+        status=ExceptionStatus.SUCCESS,
+        message="API key is valid",
+        description="The provided API key is valid."
+    )
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("examples.fastapi_usage:app", host="0.0.0.0", port=8003, reload=True)
+
+
+
+"""
 from fastapi import FastAPI, Path
 from pydantic import BaseModel, Field
 from api_exception import (
@@ -50,7 +108,7 @@ class ApiKeyModel(BaseModel):
     "/user/{user_id}",
     response_model=ResponseModel[UserResponse],
     responses=APIResponse.default(),
-    description="""
+    description='''
 Examples:
 - Get user with ID 1: `/user/1` - APIException: If the user ID is 1.
 - Get user with ID 2: `/user/2` - TypeError: If the user ID 2.
@@ -59,7 +117,7 @@ Examples:
 - Get user with ID 5: `/user/5` - ZeroDivisionError: If the user ID is 5.
 - Get user with ID 6: `/user/6` - RuntimeError: If the user ID is 6.
 - Get user with ID 7: `/user/7` - Returns a valid user response.
-"""
+'''
 )
 async def get_user(user_id: int = Path(..., description="The ID of the user")):
     if user_id == 1:
@@ -132,3 +190,4 @@ async def user_basic():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+"""

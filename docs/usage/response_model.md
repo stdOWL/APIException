@@ -5,7 +5,7 @@ A **clean, predictable response structure** is the heart of a stable API.
 The `ResponseModel` in **APIException** makes sure every success **and** error response always has the same JSON format — easy to document, easy to parse, and friendly for frontend teams.
 
 
-![response_model.gif](response_model.gif)
+![response_model.gif](apiexception-responseModel.gif)
 
 
 ---
@@ -35,28 +35,25 @@ Every API response includes:
 
 ```python
 from fastapi import FastAPI
-from APIException import (
+from pydantic import BaseModel, Field
+from apiexception import (
     ResponseModel,
     APIResponse,
     APIException,
     ExceptionStatus,
     BaseExceptionCode
 )
-from pydantic import BaseModel, Field
 
 app = FastAPI()
+register_exception_handlers(app=app)
+
 
 '''
 Custom Exception Class that you can define in your code to make the backend responses look more standardized.
 Just extend the `BaseExceptionCode` and use it. 
 '''
 class CustomExceptionCode(BaseExceptionCode):
-    USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
     INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
-    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
-    VALIDATION_ERROR = ("VAL-422", "Validation Error", "Input validation failed.")
-    TYPE_ERROR = ("TYPE-400", "Type error.", "A type mismatch occurred in the request.")  # <- EKLENDİ
-
 
 
 class ApiKeyModel(BaseModel):
@@ -97,7 +94,7 @@ async def check_api_key(api_key: str):
 }
 ```
 
-![successful_response.gif](successful_response.gif)
+![successful_response.gif](apiexception-responseModelValidKey.gif)
 
 
 ### ❌ Error Response
@@ -113,7 +110,7 @@ async def check_api_key(api_key: str):
 ```
 
 
-![error_case_response.gif](error_case_response.gif)
+![error_case_response.gif](apiexception-responseModelInvalidKey.gif)
 
 
 
