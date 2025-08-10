@@ -1,5 +1,6 @@
 # Examples
 
+## All in One Example Application
 Below is a comprehensive example application demonstrating the capabilities of `api_exception`.  
 This single file showcases how you can:
 
