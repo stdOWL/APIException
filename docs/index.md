@@ -161,7 +161,7 @@ In both cases, the response structure is **consistent**.
 
 - In the example above, when the `user_id` is `1`, it raises an `APIException` with a custom `error_code`, the response is formatted according to the `ResponseModel` and it's logged **automatically** as shown below:
 
-![apiexception-indexApiExceptionLog.png](assets/ApiException-indexApiExceptionLog.png)
+![apiexception-indexApiExceptionLog.png](assets/apiexception-indexApiExceptionLog.png)
 
 
 #### - Uncaught Exception API Response?
@@ -180,7 +180,7 @@ What if you forget to handle an exception such as in the [**example**](#see-it-i
 }
 ```
 
-![apiexception-indexApiExceptionLog.png](assets/ApiException-indexZeroDivisionLog.png)
+![apiexception-indexApiExceptionLog.png](assets/apiexception-indexZeroDivisionLog.png)
 
 ### 💡 Clear & Consistent Responses
 - 🟢 **200**: Success responses are always documented with your data model.
