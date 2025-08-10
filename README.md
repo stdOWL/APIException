@@ -101,6 +101,11 @@ async def user(user_id: int = Path()):
     )
 ```
 
+The above code demonstrates how to handle exceptions in FastAPI using the `APIException` library. 
+
+When you run your FastAPI app and open **Swagger UI** (`/docs`),  
+your endpoints will display **clean, predictable response schemas** like this below:
+
 ![_user_{user_id}.gif](/assets/apiexception-indexBasicUsage-1.gif)
 
 ---
