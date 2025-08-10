@@ -218,11 +218,7 @@ async def success():
 
 **_Response Model In Abstract:_**
 
-
-<video autoplay loop muted playsinline width="900">
-  <source src="docs/usage/apiexception-responseModel.mp4" type="video/mp4">
-</video>
-
+![apiexception-responseModel.gif](assets/apiexception-responseModel.gif)
 
 
 ---
