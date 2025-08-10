@@ -253,7 +253,7 @@ Always extend BaseExceptionCode — don’t subclass ExceptionCode directly!
 from api_exception import BaseExceptionCode
 
 class CustomExceptionCode(BaseExceptionCode):
-    USER_NOT_FOUND = ("USR-404", "User not found.", "User does not exist.")
+    USER_NOT_FOUND = ("-404", "User not found.", "User does not exist.")
     INVALID_API_KEY = ("API-401", "Invalid API key.", "Key missing or invalid.")
 ```
 
@@ -319,8 +319,6 @@ logger.setLevel("DEBUG")  # Set logging level
 
 ---
 
-
-
 ## Examples
 
 ### All in One Example Application
@@ -339,8 +337,6 @@ This single file showcases how you can:
 This example serves as a **one-stop reference** to see how `api_exception` can be integrated into a real-world project while keeping exception handling **consistent**, **configurable**, and **developer-friendly**.  
 
 [**Click to see the example**](https://github.com/akutayural/APIException/blob/main/examples/production_level.py)
-
-
 
 
 ---
@@ -409,6 +405,7 @@ This can be used as a foundation. Can be extended to include more detailed tests
 Benchmark scripts and raw Locust reports are available in the [benchmark](https://github.com/akutayural/APIException/tree/main/benchmark) directory.
 
 
+---
 
 ## 📜 Changelog
 
