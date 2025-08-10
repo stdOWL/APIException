@@ -4,13 +4,13 @@
 <p align="center"><b><i>Standardising FastAPI responses with clarity, consistency, and control.</i></b></p>
 
 # APIException: Standardised Exception Handling for FastAPI
-[![PyPI version](https://img.shields.io/pypi/v/APIException?cacheSeconds=60)](https://pypi.org/project/APIException/)
+
+[![PyPI version](https://img.shields.io/pypi/v/apiexception?cacheSeconds=300)](https://pypi.org/project/apiexception/)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://akutayural.github.io/APIException/)
-[![Downloads](https://pepy.tech/badge/APIException)](https://pepy.tech/project/APIException)
-[![Python Versions](https://img.shields.io/pypi/pyversions/APIException.svg)](https://pypi.org/project/APIException/)
+[![Downloads](https://pepy.tech/badge/apiexception)](https://pepy.tech/project/apiexception)
+[![Python Versions](https://img.shields.io/pypi/pyversions/apiexception.svg)](https://pypi.org/project/apiexception/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
 **APIException** is a robust, production-ready Python library for FastAPI that simplifies exception handling and ensures consistent, well-structured API responses. Designed for developers who want to eliminate boilerplate error handling and improve Swagger/OpenAPI documentation, APIException makes your FastAPI projects cleaner and easier to maintain.
 
 - 🔒 Consistent JSON responses for **both** success and errors.
