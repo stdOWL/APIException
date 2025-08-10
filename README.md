@@ -44,14 +44,13 @@ pip install apiexception
 **1️⃣ Register the Handler**
 
 ```python
-from api_exception import register_exception_handlers
+from api_exception import register_exception_handlers, logger
 from fastapi import FastAPI
 
 app = FastAPI()
 register_exception_handlers(app)  # uses ResponseModel by default
 
-# Use raw dict instead:
-# register_exception_handlers(app, use_response_model=False)
+logger.setLevel("INFO")  # Set logging level if needed
 ```
 
 ---
@@ -60,7 +59,7 @@ register_exception_handlers(app)  # uses ResponseModel by default
 
 ```python
 from fastapi import FastAPI, Path
-from api_exception import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+from api_exception import APIException, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -110,6 +109,47 @@ your endpoints will display **clean, predictable response schemas** like this be
 
 ---
 
+#### - Successful API Response? 
+
+```json
+{
+  "data": {
+    "users": [
+      {
+        "id": 1,
+        "username": "John Doe"
+      },
+      {
+        "id": 2,
+        "username": "Jane Smith"
+      },
+      {
+        "id": 3,
+        "username": "Alice Johnson"
+      }
+    ]
+  },
+  "status": "SUCCESS",
+  "message": "Operation completed successfully.",
+  "error_code": null,
+  "description": "User found."
+}
+```
+---
+
+#### - Error API Response? 
+```json
+{
+  "data": null,
+  "status": "FAIL",
+  "message": "User not found.",
+  "error_code": "USR-404",
+  "description": "The user ID does not exist."
+}
+
+```
+
+---
 
 In both `error` and the `success` cases, the response structure is **consistent**.
 
@@ -117,6 +157,7 @@ In both `error` and the `success` cases, the response structure is **consistent*
 
 ![apiexception-indexApiExceptionLog.png](docs/assets/apiexception-indexApiExceptionLog.png)
 
+---
 
 #### - Uncaught Exception API Response?
 
@@ -178,7 +219,10 @@ async def success():
 **_Response Model In Abstract:_**
 
 
-![response_model.gif](assets/response_model.gif)
+<video autoplay loop muted playsinline width="900">
+  <source src="docs/usage/apiexception-responseModel.mp4" type="video/mp4">
+</video>
+
 
 
 ---
