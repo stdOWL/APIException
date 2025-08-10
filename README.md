@@ -58,9 +58,16 @@ logger.setLevel("INFO")  # Set logging level if needed
  ## 🔍 Example: Error Handling with Custom Codes
 
 ```python
+from typing import List
 from fastapi import FastAPI, Path
-from api_exception import APIException, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from api_exception import (
+    APIException,
+    BaseExceptionCode,
+    ResponseModel,
+    register_exception_handlers,
+    APIResponse
+)
 
 app = FastAPI()
 
@@ -68,20 +75,29 @@ app = FastAPI()
 # error handling and response structure
 register_exception_handlers(app=app)
 
-# Create the validation model for your response
-class UserResponse(BaseModel):
-    id: int
-    username: str
 
 # Define your custom exception codes extending BaseExceptionCode
 class CustomExceptionCode(BaseExceptionCode):
     USER_NOT_FOUND = ("USR-404", "User not found.", "The user ID does not exist.")
+    INVALID_API_KEY = ("API-401", "Invalid API key.", "Provide a valid API key.")
+    PERMISSION_DENIED = ("PERM-403", "Permission denied.", "Access to this resource is forbidden.")
 
-    
+
+# Let's assume you have a UserModel that represents the user data
+class UserModel(BaseModel):
+    id: int = Field(...)
+    username: str = Field(...)
+
+
+# Create the validation model for your response.
+class UserResponse(BaseModel):
+    users: List[UserModel] = Field(..., description="List of user objects")
+
+
 @app.get("/user/{user_id}",
-    response_model=ResponseModel[UserResponse],
-    responses=APIResponse.default()
-)
+         response_model=ResponseModel[UserResponse],
+         responses=APIResponse.default()
+         )
 async def user(user_id: int = Path()):
     if user_id == 1:
         raise APIException(
@@ -89,11 +105,17 @@ async def user(user_id: int = Path()):
             http_status_code=401,
         )
     if user_id == 3:
-        a=1
-        b=0
-        c = a / b  # This will raise a ZeroDivisionError
+        a = 1
+        b = 0
+        c = a / b  # This will raise ZeroDivisionError and be caught by the global exception handler
         return c
-    data = UserResponse(id=1, username="John Doe")
+
+    users = [
+        UserModel(id=1, username="John Doe"),
+        UserModel(id=2, username="Jane Smith"),
+        UserModel(id=3, username="Alice Johnson")
+    ]
+    data = UserResponse(users=users)
     return ResponseModel[UserResponse](
         data=data,
         description="User found and returned."
