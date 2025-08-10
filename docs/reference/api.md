@@ -96,6 +96,7 @@ Sets up global handlers to catch APIException and unexpected errors.
 from api_exception import register_exception_handlers
 ```
 
+It's detailed in the [Register Exception Handlers](../usage/register_exception_handlers.md) section.
 
 ## ⚡ Example
 

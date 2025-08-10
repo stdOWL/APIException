@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Path
 from pydantic import BaseModel, Field
-from apiexception import (
+from api_exception import (
     APIException,
     ExceptionStatus,
     BaseExceptionCode,
