@@ -115,7 +115,7 @@ In both `error` and the `success` cases, the response structure is **consistent*
 
 #### - Uncaught Exception API Response?
 
-What if you forget to handle an exception such as in the [**example**](#see-it-in-action) above?
+What if you forget to handle an exception such as in the **example** above?
 
 - When the `user_id` is `3`, the program automatically catches the `ZeroDivisionError` and returns a standard error response, logging it in a **clean structure** as shown below:
 
