@@ -21,7 +21,7 @@ The `BaseExceptionCode` in **APIException** gives you a simple pattern to organi
 Create your own class by extending `BaseExceptionCode` and declare your error codes once:
 
 ```python
-from APIException import BaseExceptionCode
+from api_exception import BaseExceptionCode
 
 class CustomExceptionCode(BaseExceptionCode):
     # Format: KEY = (code, message, description)
@@ -34,7 +34,7 @@ class CustomExceptionCode(BaseExceptionCode):
 Raise your custom error with full `typing`, `logging`, and `standardized` response:
 
 ```python
-from APIException import APIException
+from api_exception import APIException
 
 raise APIException(
     error_code=CustomExceptionCode.USER_NOT_FOUND,

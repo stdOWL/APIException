@@ -20,7 +20,7 @@ When you call `register_exception_handlers()`, just pass `use_fallback_middlewar
 
 ```python
 from fastapi import FastAPI
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 
 app = FastAPI()
 

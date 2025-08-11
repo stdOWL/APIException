@@ -13,7 +13,7 @@ pip install apiexception
 Add the register_exception_handlers to your FastAPI app to automatically handle and standardize your responses:
 
 ```python
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -28,8 +28,9 @@ Your API now returns consistent success & error responses, and unexpected server
 Here’s a minimal example:
 ```python
 from fastapi import FastAPI, Path
-from APIException import APIException, ExceptionStatus, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
 from pydantic import BaseModel, Field
+from api_exception import APIException, register_exception_handlers, ResponseModel, APIResponse, BaseExceptionCode
+
 
 app = FastAPI()
 

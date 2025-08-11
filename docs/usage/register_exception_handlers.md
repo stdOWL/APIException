@@ -96,7 +96,7 @@ Header: `Content-Type: application/problem+json`
 
 ```python
 from fastapi import FastAPI
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 
 app = FastAPI()
 register_exception_handlers(app)
@@ -113,7 +113,7 @@ register_exception_handlers(app)
 
 ### Production with file logging and quieter handled errors
 ```python
-from APIException import register_exception_handlers, add_file_handler, logger
+from api_exception import register_exception_handlers, add_file_handler, logger
 
 add_file_handler("prod_errors.log")
 register_exception_handlers(
@@ -126,7 +126,7 @@ logger.setLevel("WARNING")
 
 ### RFC 7807 outputs
 ```python
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 from custom_enum.enums import ResponseFormat
 
 register_exception_handlers(
@@ -161,7 +161,7 @@ register_exception_handlers(
 ```python
 from fastapi import FastAPI, Path
 from pydantic import BaseModel
-from APIException import (
+from api_exception import (
     APIException, register_exception_handlers, ResponseModel,
     BaseExceptionCode, APIResponse
 )
