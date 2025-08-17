@@ -22,7 +22,7 @@ and `APIResponse.default()` for default error code values,
 This documents your success response plus the default errors (400, 401, 403, 404, 422, 500).
 
 ```python
-from APIException import APIResponse, ResponseModel
+from api_exception import APIResponse, ResponseModel
 @app.get("/user",
     response_model=ResponseModel[UserResponse],
     responses=APIResponse.default()
@@ -42,7 +42,7 @@ Want more control?
 Use `APIResponse.custom()` to add your own specific error codes for each endpoint.
 
 ```python
-from APIException import ResponseModel, APIResponse
+from api_exception import ResponseModel, APIResponse
 @app.get("/user",
     response_model=ResponseModel[UserResponse],
     responses=APIResponse.custom(

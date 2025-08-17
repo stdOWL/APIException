@@ -12,7 +12,6 @@ from api_exception import (
 app = FastAPI()
 register_exception_handlers(app)
 
-
 '''
 Custom Exception Class that you can define in your code to make backend error responses standardized and predictable.
 
@@ -82,6 +81,7 @@ async def get_user(user_id: int = Path(..., description="The ID of the user")):
     data = UserResponse(id=user_id, username="John Doe")
     return ResponseModel(data=data,
                          description="User fetched successfully.")
+
 
 
 @app.get(

@@ -12,7 +12,7 @@ they’re also **automatically logged** so you always have a clear trail of what
 
 **Auto-logging:**
 ```python
-from APIException import register_exception_handlers
+from api_exception import register_exception_handlers
 from fastapi import FastAPI
 
 app = FastAPI()
