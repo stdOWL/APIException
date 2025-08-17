@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar, Optional
-from pydantic import BaseModel, Field, ConfigDict
-from custom_enum.enums import ExceptionStatus
+from pydantic import BaseModel, Field
+from api_exception.enums import ExceptionStatus
 
 # Generic type for response data
 DataT = TypeVar('DataT')

@@ -11,7 +11,7 @@ from api_exception import (
     set_default_http_codes,
     APIResponse,
 )
-from custom_enum.enums import ResponseFormat
+from api_exception.enums import ResponseFormat
 from examples.fastapi_usage import CustomExceptionCode
 
 

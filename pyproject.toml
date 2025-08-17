@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "apiexception"
-version = "0.1.18"
+version = "0.1.19"
 description = "Consistent JSON response formatting and exception & error handling for FastAPI applications"
 authors = ["Ahmet Kutay URAL <ahmetkutayural@gmail.com>"]
 readme = "README.md"
@@ -22,19 +22,15 @@ classifiers = [
   "Typing :: Typed",
 ]
 
-# Çoklu paket desteği (schemas, custom_enum vs. dahil)
 packages = [
-  { include = "api_exception" },
-  { include = "custom_enum" },
-  { include = "schemas" }
-  # { include = "examples", optional = true } # paketlemek istemiyorsan yorumda bırak
+  { include = "api_exception" }
 ]
 
 [tool.poetry.urls]
 "Documentation" = "https://akutayural.github.io/APIException/"
 "Source" = "https://github.com/akutayural/APIException"
 "Bug Tracker" = "https://github.com/akutayural/APIException/issues"
-"Changelog" = "https://github.com/akutayural/APIException/blob/main/CHANGELOG.md"
+"Changelog" = "https://github.com/akutayural/APIException/blob/main/docs/changelog.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10"

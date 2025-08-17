@@ -4,9 +4,22 @@ All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
 
+## [0.1.19] - 2025-08-18
+✅ **Initial stable and suggested version**
+
+#### Added
+- Unified import interface: all core classes and functions can now be imported directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
+- Cleaner `__init__.py` exports with `__all__`.
+
+#### Changed
+- Internal imports refactored, simplified folder structure for `enums.py`, `response_model.py`, `rfc7807_model.py`.
+
+#### Fixed
+- Example and README imports updated to use new unified style.
+
+
 ## [0.1.18] - 2025-08-17
 
-✅ **Initial stable version**
 
 ### Added
 - Global logging control (`set_global_log`) with `log` param in `register_exception_handlers`.

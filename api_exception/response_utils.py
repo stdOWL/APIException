@@ -1,7 +1,7 @@
 from typing import Dict
-from schemas.response_model import ResponseModel
-from custom_enum.enums import ExceptionStatus, BaseExceptionCode
-from schemas.rfc7807_model import RFC7807ResponseModel
+from api_exception.response_model import ResponseModel
+from api_exception.enums import ExceptionStatus, BaseExceptionCode
+from api_exception.rfc7807_model import RFC7807ResponseModel
 
 
 class APIResponse:

@@ -5,11 +5,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
-from schemas.rfc7807_model import RFC7807ResponseModel
+from api_exception.rfc7807_model import RFC7807ResponseModel
 from .logger import logger, add_file_handler
 from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES, set_global_log
-from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode, ResponseFormat
-from schemas.response_model import ResponseModel
+from api_exception.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode, ResponseFormat
+from api_exception.response_model import ResponseModel
 from .response_utils import APIResponse
 import traceback
 

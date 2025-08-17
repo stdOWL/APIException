@@ -60,8 +60,8 @@ In **Swagger UI**, your custom error cases will show up clearly alongside your s
 The exception messages will be formatted as RFC 7807.
 
 ```python
-from schemas.response_model import ResponseModel
-from api_exception import APIResponse
+from api_exception import ResponseModel, APIResponse
+
 
 @app.get(
     "/rfc7807",

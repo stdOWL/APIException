@@ -127,14 +127,14 @@ logger.setLevel("WARNING")
 ```
 
 ### RFC 7807 outputs
+
 ```python
-from api_exception import register_exception_handlers
-from custom_enum.enums import ResponseFormat
+from api_exception import register_exception_handlers, ResponseFormat
 
 register_exception_handlers(
-    app,
-    response_format=ResponseFormat.RFC7807,
-    include_null_data_field_in_openapi=False
+   app,
+   response_format=ResponseFormat.RFC7807,
+   include_null_data_field_in_openapi=False
 )
 ```
 
@@ -147,12 +147,13 @@ register_exception_handlers(
 ```
 
 ### Lightweight dict responses
+
 ```python
-from custom_enum.enums import ResponseFormat
+from api_exception import ResponseFormat
 
 register_exception_handlers(
-    app,
-    response_format=ResponseFormat.RESPONSE_DICTIONARY
+   app,
+   response_format=ResponseFormat.RESPONSE_DICTIONARY
 )
 ```
 

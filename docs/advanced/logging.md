@@ -40,13 +40,13 @@ You get two powerful behaviors:
 If you want to log your own events (not just exceptions), you can use the built-in logger:
 
 ```python
-from api_exception.logger import logger
+from api_exception import logger
 logger.warning("This will be logged to both console and file")
 logger.info("This INFO log will also be written to the file"
 ```
 Also you can call add_file_handler to write log to file
 ```python
-from api_exception.logger import add_file_handler,logger
+from api_exception import add_file_handler,logger
 add_file_handler("api_exception.log", level=logging.DEBUG)
 logger.warning("This will be logged to both console and file")
 ```

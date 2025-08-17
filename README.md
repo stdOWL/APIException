@@ -410,9 +410,22 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-**v0.1.18 - 2025-08-17**
+**v0.1.19 - 2025-08-18**
+✅ **Initial stable and suggested version**
 
-✅ **Initial stable version**
+
+#### Added
+- Unified import interface: all core classes and functions can now be imported directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
+- Cleaner `__init__.py` exports with `__all__`.
+
+#### Changed
+- Internal imports refactored, simplified folder structure for `enums.py`, `response_model.py`, `rfc7807_model.py`.
+
+#### Fixed
+- Example and README imports updated to use new unified style.
+
+
+**v0.1.18 - 2025-08-17**
 
 #### Added
 - Global logging control (`set_global_log`) with `log` param in `register_exception_handlers`.
