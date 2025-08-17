@@ -67,6 +67,7 @@ async def get_user(user_id: int = Path(..., description="The ID of the user")):
             error_code=CustomExceptionCode.USER_NOT_FOUND,
             http_status_code=404,
         )
+
     if user_id == 2:
         raise TypeError("Invalid type provided.")
     if user_id == 3:
