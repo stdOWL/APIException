@@ -6,25 +6,29 @@ authors = ["Ahmet Kutay URAL <ahmetkutayural@gmail.com>"]
 readme = "README.md"
 license = "MIT"
 keywords = ["fastapi", "exception", "error-handling", "json-response"]
-homepage = "https://github.com/akutayural/APIException"
-repository = "https://github.com/akutayural/APIException"
-documentation = "https://akutayural.github.io/APIException"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Environment :: Web Environment",
-    "Framework :: FastAPI",
-    "Intended Audience :: Developers",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Software Development :: Libraries :: Application Frameworks",
-    "Typing :: Typed",
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Framework :: FastAPI",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Typing :: Typed",
 ]
 
+# Çoklu paket desteği (schemas, custom_enum vs. dahil)
+packages = [
+  { include = "api_exception" },
+  { include = "custom_enum" },
+  { include = "schemas" }
+  # { include = "examples", optional = true } # paketlemek istemiyorsan yorumda bırak
+]
 
 [tool.poetry.urls]
 "Documentation" = "https://akutayural.github.io/APIException/"
@@ -32,14 +36,12 @@ classifiers = [
 "Bug Tracker" = "https://github.com/akutayural/APIException/issues"
 "Changelog" = "https://github.com/akutayural/APIException/blob/main/CHANGELOG.md"
 
-
 [tool.poetry.dependencies]
 python = ">=3.10"
 fastapi = ">=0.115.4"
 httpx = ">=0.27.0"
 pydantic = ">=2.0.0"
 click = ">=8.0.0"
-
 
 [tool.poetry.group.dev.dependencies]
 mkdocs-awesome-pages-plugin = ">=2.10.1"
@@ -51,14 +53,6 @@ uvicorn = ">=0.32.0"
 
 [tool.poetry.scripts]
 APIException-info = "api_exception.__main__:main"
-
-# Çoklu paket desteği (schemas, custom_enum vs. dahil)
-packages = [
-  { include = "api_exception" },
-  { include = "custom_enum" },
-  { include = "schemas" },
-  { include = "examples", optional = true }
-]
 
 [build-system]
 requires = ["poetry-core>=1.9.0"]
