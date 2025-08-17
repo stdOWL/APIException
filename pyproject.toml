@@ -1,6 +1,6 @@
 [project]
 name = "apiexception"
-version = "0.1.16"
+version = "0.1.17.post1"
 description = "Consistent JSON response formatting and error handling for FastAPI applications"
 authors = [{ name = "Ahmet Kutay URAL", email = "ahmetkutayural@gmail.com" }]
 requires-python = ">=3.10"
@@ -34,6 +34,11 @@ dependencies = [
     "click>=8.0.0",
 ]
 
+[project.urls]
+Documentation = "https://akutayural.github.io/APIException/"
+Source = "https://github.com/akutayural/APIException"
+PyPI = "https://pypi.org/project/apiexception/"
+
 [project.optional-dependencies]
 dev = [
     "mkdocs-awesome-pages-plugin>=2.10.1",
@@ -42,11 +47,6 @@ dev = [
     "ruff==0.12.5",
     "setuptools>=80.9.0",
 ]
-
-[project.urls]
-Documentation = "https://akutayural.github.io/APIException/"
-Source = "https://github.com/akutayural/APIException"
-PyPI = "https://pypi.org/project/APIException/"
 
 [project.scripts]
 APIException-info = "api_exception.__main__:main"
