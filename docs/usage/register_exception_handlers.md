@@ -11,6 +11,7 @@ def register_exception_handlers(
     app: FastAPI,
     response_format: ResponseFormat = ResponseFormat.RESPONSE_MODEL,
     use_fallback_middleware: bool = True,
+    log: bool = True,
     log_traceback: bool = True,
     log_traceback_unhandled_exception: bool = True,
     include_null_data_field_in_openapi: bool = True,
@@ -19,14 +20,15 @@ def register_exception_handlers(
 ```
 ## Parameters
 
-| Parameter | Type | Required | Default | Effect |
-|---|---|---:|---|---|
-| `app` | `FastAPI` | Yes | — | The FastAPI instance to patch with handlers and middleware. |
-| `response_format` | `ResponseFormat` | No | `ResponseFormat.RESPONSE_MODEL` | Chooses how errors are serialized. See table below. |
-| `use_fallback_middleware` | `bool` | No | `True` | Adds a middleware that catches any unhandled exception and returns a safe 500 JSON response. |
-| `log_traceback` | `bool` | No | `True` | If `True`, writes traceback for handled `APIException` errors. Useful in dev, noisy in prod. |
-| `log_traceback_unhandled_exception` | `bool` | No | `True` | If `True`, writes traceback for unhandled runtime errors caught by the middleware. |
-| `include_null_data_field_in_openapi` | `bool` | No | `True` | Injects `"data": null` into non-200 OpenAPI examples to keep a stable shape for SDKs and validators. |
+| Parameter                           | Type            | Required | Default                             | Effect                                                                                                      |
+|-------------------------------------|-----------------|----------|-------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `app`                               | `FastAPI`       | Yes      | —                                   | The FastAPI instance to patch with handlers and middleware.                                                  |
+| `response_format`                   | `ResponseFormat`| No       | `ResponseFormat.RESPONSE_MODEL`     | Chooses how errors are serialized. Can be `RESPONSE_MODEL`, `RFC7807`, or `RESPONSE_DICTIONARY`.             |
+| `use_fallback_middleware`           | `bool`          | No       | `True`                              | Adds a middleware that catches any unhandled exception and returns a safe 500 JSON response.                 |
+| `log`                               | `bool`          | No       | `True`                              | **Global toggle** for all logging (handled + unhandled). If `False`, no logs are written at all.             |
+| `log_traceback`                     | `bool`          | No       | `True`                              | If `True`, logs traceback for handled `APIException` errors. Useful in development, but can be noisy in prod. |
+| `log_traceback_unhandled_exception` | `bool`          | No       | `True`                              | If `True`, logs traceback for unhandled runtime errors caught by the middleware.                             |
+| `include_null_data_field_in_openapi`| `bool`          | No       | `True`                              | Ensures non-200 OpenAPI examples include `"data": null` for stable schemas in SDKs and validators.           |
 
 ### ResponseFormat options
 
@@ -151,6 +153,14 @@ from custom_enum.enums import ResponseFormat
 register_exception_handlers(
     app,
     response_format=ResponseFormat.RESPONSE_DICTIONARY
+)
+```
+
+### Disable all logging (global)
+```python
+register_exception_handlers(
+    app,
+    log=False
 )
 ```
 

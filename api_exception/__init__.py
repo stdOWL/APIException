@@ -7,7 +7,7 @@ from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from schemas.rfc7807_model import RFC7807ResponseModel
 from .logger import logger, add_file_handler
-from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES
+from .exception import APIException, set_default_http_codes, DEFAULT_HTTP_CODES, set_global_log
 from custom_enum.enums import ExceptionCode, ExceptionStatus, BaseExceptionCode, ResponseFormat
 from schemas.response_model import ResponseModel
 from .response_utils import APIResponse
@@ -27,12 +27,14 @@ __all__ = [
     "logger",
     "add_file_handler",
     "APIResponse",
+    "set_global_log"
 ]
 
 
 def register_exception_handlers(app: FastAPI,
                                 response_format: ResponseFormat = ResponseFormat.RESPONSE_MODEL,
                                 use_fallback_middleware: bool = True,
+                                log: bool = True,
                                 log_traceback: bool = True,
                                 log_traceback_unhandled_exception: bool = True,
                                 include_null_data_field_in_openapi: bool = True):
@@ -59,6 +61,10 @@ def register_exception_handlers(app: FastAPI,
         If ResponseFormat.RESPONSE_DICTIONARY, returns plain dictionaries.
     use_fallback_middleware : bool, default=True
         If True, catches ALL unhandled exceptions (runtime errors, etc.) and logs them.
+    log : bool, default=True
+        If False, disables **all logging** (including APIException logs and unhandled exceptions).
+        Overrides `log_exception` flags inside APIException. Useful for production environments
+        where you want standardized responses but no logging output.
     log_traceback : bool, default=True
         If True, logs traceback for APIException errors.
     log_traceback_unhandled_exception : bool, default=True
@@ -107,7 +113,8 @@ def register_exception_handlers(app: FastAPI,
     register_exception_handlers(
         app,
         use_fallback_middleware=False,   # Let FastAPI's default error pages handle unhandled exceptions
-        use_response_model=ResponseFormat.RESPONSE_MODEL         # Return plain dict responses for speed
+        log=False,
+        response_format=ResponseFormat.RESPONSE_DICTIONARY         # Return plain dict responses for speed
     )
     ```
 
@@ -124,8 +131,9 @@ def register_exception_handlers(app: FastAPI,
     # Register with all customizations
     register_exception_handlers(
         app,
-        use_response_model=ResponseFormat.RESPONSE_MODEL,
+        response_format=ResponseFormat.RESPONSE_MODEL,
         use_fallback_middleware=True,
+        log=True,
         log_traceback=True,
         log_traceback_unhandled_exception=False,  # Don't log tracebacks for runtime errors and/or
                                                  #  any uncaught errors(db error, 3rd party etc.) (just the message)
@@ -174,7 +182,7 @@ async def user_basic():
     # Register with all customizations
     register_exception_handlers(
         app,
-        use_response_model=ResponseFormat.RFC7807,
+        response_format=ResponseFormat.RFC7807,
         use_fallback_middleware=True,
         log_traceback=True,
         log_traceback_unhandled_exception=False,  # Don't log tracebacks for runtime errors and/or
@@ -203,116 +211,131 @@ def rfc7807():
     )
     ```
     """
+    set_global_log(log)
 
     @app.exception_handler(APIException)
     async def api_exception_handler(request: Request, exc: APIException):
-        logger.error(f"Exception handled for path: {request.url.path}")
-        logger.error(f"Method: {request.method}")
-        logger.error(f"Client IP: {request.client.host if request.client else 'unknown'}")
-        if log_traceback:
-            tb = traceback.format_exc()
-            logger.error(f"Traceback:\n{tb}")
+        if log:
+            logger.error(f"Exception handled for path: {request.url.path}")
+            logger.error(f"Method: {request.method}")
+            logger.error(f"Client IP: {request.client.host if request.client else 'unknown'}")
+            if log_traceback:
+                tb = traceback.format_exc()
+                logger.error(f"Traceback:\n{tb}")
 
         if response_format == ResponseFormat.RESPONSE_MODEL:
             content = exc.to_response_model().model_dump(exclude_none=False)
+            media_type = "application/json"
         elif response_format == ResponseFormat.RFC7807:
             content = exc.to_rfc7807_response().model_dump(exclude_none=False)
+            media_type = "application/problem+json"
         else:
             content = exc.to_response()
+            media_type = "application/json"
 
         return JSONResponse(
             status_code=exc.http_status_code,
             content=content,
-            media_type="application/problem+json" if response_format == ResponseFormat.RFC7807 else None
+            media_type=media_type
         )
 
     if use_fallback_middleware:
 
         @app.exception_handler(RequestValidationError)
-        async def validation_exception_handler(request, exc):
-            description = exc.errors()[0]["msg"].replace("Value error, ", "") if exc.errors()[0]["msg"].startswith(
-                "Value error, ") else exc.errors()[0]["msg"]
+        async def validation_exception_handler(request: Request, exc: RequestValidationError):
+            try:
+                first_err = exc.errors()[0]
+                msg = first_err.get("msg", "Validation error")
+            except Exception:
+                msg = "Validation error"
+
+            # Mesajı enum'un description'ına gömelim ama "first error message" bilgisini de koruyalım
+            err = ExceptionCode.VALIDATION_ERROR
+            description = msg if msg else err.description
 
             if response_format == ResponseFormat.RFC7807:
                 content = RFC7807ResponseModel(
-                    title="Validation Error",
-                    description=description,
+                    title=err.message,
                     status=HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=description,
+                    type=err.rfc7807_type,
+                    instance=err.rfc7807_instance,
                 ).model_dump(exclude_none=False)
-            else:
+                media_type = "application/problem+json"
+            elif response_format == ResponseFormat.RESPONSE_MODEL:
                 content = ResponseModel(
                     data=None,
                     status=ExceptionStatus.FAIL,
-                    message="Validation Error",
-                    error_code="VAL-422",
+                    message=err.message,
+                    error_code=err.error_code,
                     description=description,
                 ).model_dump(exclude_none=False)
+                media_type = "application/json"
+            else:
+                content = {
+                    "data": None,
+                    "status": ExceptionStatus.FAIL.value,
+                    "message": err.message,
+                    "error_code": err.error_code,
+                    "description": description,
+                }
+                media_type = "application/json"
 
             return JSONResponse(
                 status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                 content=content,
+                media_type=media_type,
             )
 
         @app.middleware("http")
-        async def fallback_exception_middleware(request: Request,
-                                                call_next: Callable):
-            """
-            Middleware to catch unhandled exceptions and log them.
-            This middleware acts as a fallback for any unhandled exceptions that occur
-            during request processing.
-            It logs the exception details and returns a standardized error response.
-            This is useful for catching unexpected errors that are not explicitly handled
-            by the APIException handler.
-            Parameters:
-            ----------
-            -----------
-            request: Request
-                The incoming request object.
-            call_next: Callable
-                The next middleware or endpoint to call.
-            -----------
-
-            Args:
-                request:
-                call_next:
-
-            Returns:
-                JSONResponse: A standardized error response with status code 500.
-
-            """
+        async def fallback_exception_middleware(request: Request, call_next: Callable):
             try:
                 return await call_next(request)
             except Exception as e:
-                tb = traceback.format_exc()
-                logger.error("⚡ Unhandled Exception Fallback ⚡")
-                logger.error(f"📌 Path: {request.url.path}")
-                logger.error(f"📌 Method: {request.method}")
-                logger.error(f"📌 Client IP: {request.client.host if request.client else 'unknown'}")
-                logger.error(f"📌 Exception Args: {e.args}")
-                logger.error(f"📌 Exception: {str(e)}")
+                if log:
+                    tb = traceback.format_exc()
+                    logger.error("⚡ Unhandled Exception Fallback ⚡")
+                    logger.error(f"📌 Path: {request.url.path}")
+                    logger.error(f"📌 Method: {request.method}")
+                    logger.error(f"📌 Client IP: {request.client.host if request.client else 'unknown'}")
+                    logger.error(f"📌 Exception Args: {e.args}")
+                    logger.error(f"📌 Exception: {str(e)}")
+                    if log_traceback_unhandled_exception:
+                        logger.error(f"📌 Traceback:\n{tb}")
 
-            if log_traceback_unhandled_exception:
-                logger.error(f"📌 Traceback:\n{tb}")
+                err = ExceptionCode.INTERNAL_SERVER_ERROR
 
                 if response_format == ResponseFormat.RFC7807:
                     content = RFC7807ResponseModel(
-                        title="Validation Error",
-                        description="An unexpected error occurred. Please try again later.",
-                        status=HTTP_422_UNPROCESSABLE_ENTITY,
+                        title=err.message,
+                        status=500,
+                        detail=err.description,
+                        type=err.rfc7807_type,
+                        instance=err.rfc7807_instance,
                     ).model_dump(exclude_none=False)
-                else:
+                    media_type = "application/problem+json"
+                elif response_format == ResponseFormat.RESPONSE_MODEL:
                     content = ResponseModel(
                         data=None,
                         status=ExceptionStatus.FAIL,
-                        message="Something went wrong.",
-                        error_code="ISE-500",
-                        description="An unexpected error occurred. Please try again later."
+                        message=err.message,
+                        error_code=err.error_code,
+                        description=err.description,
                     ).model_dump(exclude_none=False)
+                    media_type = "application/json"
+                else:
+                    content = {
+                        "data": None,
+                        "status": ExceptionStatus.FAIL.value,
+                        "message": err.message,
+                        "error_code": err.error_code,
+                        "description": err.description,
+                    }
+                    media_type = "application/json"
 
-                return JSONResponse(
-                    status_code=500,
-                    content=content
-                )
+                return JSONResponse(status_code=500, content=content, media_type=media_type)
+
+
     if include_null_data_field_in_openapi:
         """
         Custom OpenAPI schema generator that injects `data: null` into example error responses

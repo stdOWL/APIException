@@ -1,16 +1,14 @@
-[project]
+[tool.poetry]
 name = "apiexception"
 version = "0.1.18"
 description = "Consistent JSON response formatting and exception & error handling for FastAPI applications"
-authors = [{ name = "Ahmet Kutay URAL", email = "ahmetkutayural@gmail.com" }]
-requires-python = ">=3.10"
+authors = ["Ahmet Kutay URAL <ahmetkutayural@gmail.com>"]
 readme = "README.md"
-keywords = [
-    "fastapi",
-    "exception",
-    "error-handling",
-    "json-response",
-]
+license = "MIT"
+keywords = ["fastapi", "exception", "error-handling", "json-response"]
+homepage = "https://github.com/akutayural/APIException"
+repository = "https://github.com/akutayural/APIException"
+documentation = "https://akutayural.github.io/APIException"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -26,11 +24,16 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Typing :: Typed",
 ]
+homepage = "https://github.com/akutayural/APIException"
+repository = "https://github.com/akutayural/APIException"
+documentation = "https://akutayural.github.io/APIException"
 
-[project.urls]
-Documentation = "https://akutayural.github.io/APIException/"
-Source = "https://github.com/akutayural/APIException"
-PyPI = "https://pypi.org/project/apiexception/"
+[tool.poetry.urls]
+"Documentation" = "https://akutayural.github.io/APIException/"
+"Source" = "https://github.com/akutayural/APIException"
+"Bug Tracker" = "https://github.com/akutayural/APIException/issues"
+"Changelog" = "https://github.com/akutayural/APIException/blob/main/CHANGELOG.md"
+
 
 [tool.poetry.dependencies]
 python = ">=3.10"
@@ -48,17 +51,17 @@ ruff = "==0.12.5"
 setuptools = ">=80.9.0"
 uvicorn = ">=0.32.0"
 
-
-[project.scripts]
+[tool.poetry.scripts]
 APIException-info = "api_exception.__main__:main"
 
+# Çoklu paket desteği (schemas, custom_enum vs. dahil)
+packages = [
+  { include = "api_exception" },
+  { include = "custom_enum" },
+  { include = "schemas" },
+  { include = "examples", optional = true }
+]
+
 [build-system]
-requires = ["setuptools>=80.9.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.uv]
-package = false
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["api_exception*", "custom_enum*", "schemas*", "examples*"]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"

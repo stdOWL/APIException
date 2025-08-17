@@ -52,9 +52,30 @@ class ExceptionCode(BaseExceptionCode):
     - A user-friendly message.
     - An optional description for more context.
     """
-    AUTH_LOGIN_FAILED = ("AUTH-1000", "Incorrect username and password.", "Failed authentication attempt.", "https://example.com/problems/authentication-error", "/login")
+    AUTH_LOGIN_FAILED = ("AUTH-1000", "Incorrect username and password.",
+                         "Failed authentication attempt.",
+                         "https://example.com/problems/authentication-error",
+                         "/login")
     EMAIL_ALREADY_TAKEN = (
-        "RGST-1000", "An account with this email already exists.", "Duplicate email during registration.", "https://example.com/problems/duplicate-registration", "/register")
+        "RGST-1000",
+        "An account with this email already exists.",
+        "Duplicate email during registration.",
+        "https://example.com/problems/duplicate-registration",
+        "/register")
+    INTERNAL_SERVER_ERROR = (
+        "ISE-500",
+        "Internal Server Error",
+        "An unexpected error occurred. Please try again later.",
+        "https://example.com/problems/internal-server-error",
+        "/"
+    )
+    VALIDATION_ERROR = (
+        "VAL-422",
+        "Validation Error",
+        "Request validation failed. Please check the submitted fields.",
+        "https://example.com/problems/validation-error",
+        "/"
+    )
     # Add other exceptions with descriptions as needed
 
 

@@ -7,6 +7,14 @@ from .logger import logger
 from custom_enum.enums import ExceptionCode, ExceptionStatus
 from schemas.response_model import ResponseModel
 
+GLOBAL_LOG: bool = True
+
+
+def set_global_log(should_log: bool) -> None:
+    """Enable/disable all library logging globally."""
+    global GLOBAL_LOG
+    GLOBAL_LOG = bool(should_log)
+
 
 
 class APIException(Exception):
@@ -68,7 +76,7 @@ class APIException(Exception):
         self.rfc7807_type = error_code.rfc7807_type
         self.rfc7807_instance = error_code.rfc7807_instance
 
-        if self.log_exception:
+        if GLOBAL_LOG and self.log_exception:
             # Log the exception details
             self.__log__()
 

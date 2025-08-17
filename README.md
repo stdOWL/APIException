@@ -410,9 +410,25 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-**v0.1.17 (2025-08-10)**
+**v0.1.18 - 2025-08-17**
 
 ✅ **Initial stable version**
+
+#### Added
+- Global logging control (`set_global_log`) with `log` param in `register_exception_handlers`.
+- RFC7807 full support with `application/problem+json` responses.
+- Automatic injection of `data: null` in OpenAPI error examples.
+
+#### Changed
+- Dependency pins relaxed (`>=` instead of strict `==`).
+- Docstrings and examples updated (`use_response_model` → `response_format`).
+- Unified error logging (no logs when `log=False`).
+
+#### Fixed
+- Fallback middleware now returns HTTP 500 instead of 422 for unexpected errors.
+- Traceback scope bug fixed in handlers.
+
+**v0.1.17 (2025-08-10)**
 
 - `RFC 7807` standard support for consistent error responses (`application/problem+json`)
 
