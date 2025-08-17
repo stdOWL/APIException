@@ -410,9 +410,16 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-**v0.1.20 - 2025-08-18**
+##v0.1.21 - 2025-08-18**
 ✅ **Initial stable and suggested version**
 
+
+### Fixed
+- Added missing `import traceback` in `__init__.py`.  
+  This resolves a `NameError` when using `register_exception_handlers` with traceback logging enabled.
+
+
+**v0.1.20 - 2025-08-18**
 
 #### Changed
 - Restructured `__init__.py` to use **relative imports** (`from .module import ...`) instead of absolute imports for cleaner packaging and IDE compatibility.

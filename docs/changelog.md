@@ -3,9 +3,16 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
-## [0.1.20] - 2025-08-18
+## [0.1.21] - 2025-08-18
 ✅ Stable release!
 ✅ **Initial stable and suggested version**
+
+### Fixed
+- Added missing `import traceback` in `__init__.py`.  
+  This resolves a `NameError` when using `register_exception_handlers` with traceback logging enabled.
+
+
+## [0.1.20] - 2025-08-18
 
 #### Changed
 - Refactored `__init__.py` to use relative imports (`from .module import ...`) for cleaner packaging and better IDE compatibility.

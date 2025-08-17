@@ -1,3 +1,4 @@
+import traceback
 from typing import Callable
 
 from fastapi import FastAPI, Request
@@ -26,7 +27,7 @@ __all__ = [
     "ResponseModel",
     "ResponseFormat",
     "RFC7807ResponseModel",
-    "register_exception_handlers",  # bu fonksiyon aşağıda tanımlı kalıyor
+    "register_exception_handlers",
     "set_default_http_codes",
     "logger",
     "add_file_handler",
