@@ -24,9 +24,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Typing :: Typed",
 ]
-homepage = "https://github.com/akutayural/APIException"
-repository = "https://github.com/akutayural/APIException"
-documentation = "https://akutayural.github.io/APIException"
+
 
 [tool.poetry.urls]
 "Documentation" = "https://akutayural.github.io/APIException/"
