@@ -3,9 +3,20 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
+## [0.1.20] - 2025-08-18
+✅ Stable release!
+✅ **Initial stable and suggested version**
+
+#### Changed
+- Refactored `__init__.py` to use relative imports (`from .module import ...`) for cleaner packaging and better IDE compatibility.
+- Unified and simplified `__all__` so developers can import everything directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
+
+#### Fixed
+- Resolved IDE red import warnings when using the library in external projects.
+- Improved top-level import resolution and consistency across modules.
+
 
 ## [0.1.19] - 2025-08-18
-✅ **Initial stable and suggested version**
 
 #### Added
 - Unified import interface: all core classes and functions can now be imported directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
@@ -112,8 +123,6 @@ This project uses *Semantic Versioning*.
 
 
 ## [0.1.11] - 2025-07-13
-
-✅ Stable release!
 
 - Global exception handlers with fallback middleware
 

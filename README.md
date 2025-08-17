@@ -410,9 +410,19 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-**v0.1.19 - 2025-08-18**
+**v0.1.20 - 2025-08-18**
 ✅ **Initial stable and suggested version**
 
+
+#### Changed
+- Restructured `__init__.py` to use **relative imports** (`from .module import ...`) instead of absolute imports for cleaner packaging and IDE compatibility.
+- Unified all public exports under `__all__` so that consumers can simply `from api_exception import ...` without needing sub-module paths.
+
+#### Fixed
+- Resolved IDE/PyCharm highlighting issues where imports appeared red even though they worked at runtime.
+- Improved import resolution when using the package in external projects by flattening top-level exports.
+
+**v0.1.19 - 2025-08-18**
 
 #### Added
 - Unified import interface: all core classes and functions can now be imported directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
