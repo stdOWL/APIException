@@ -3,6 +3,35 @@
 All notable changes to APIException will be documented here.
 This project uses *Semantic Versioning*.
 
+
+## [0.2.0] - 2025-08-23
+### Added
+- **Advanced logging customizations** in `register_exception_handlers`:
+  - `log_level`: override verbosity for exception logging.
+  - `log_request_context`: toggle to include/exclude request headers in logs.
+  - `log_header_keys`: define which headers are logged (default: `x-request-id`, `user-agent`, etc.).
+  - `extra_log_fields`: inject custom structured metadata into logs (e.g. `user_id`, masked API keys).
+- **Response headers echo** in `register_exception_handlers`:
+  - `response_headers=True` → default headers echoed back.
+  - `response_headers=False` → no headers echoed.
+  - `response_headers=("x-user-id",)` → custom headers echoed.
+- `APIException` now accepts header parameters (headers can carry custom values into responses).
+- **Mypy** support added for static type checking.
+- Improved documentation for `register_exception_handlers` with usage patterns, logging, and examples.
+
+
+### Changed
+- Logging format has been revamped → now more structured, readable, and consistent.
+- Error logging now includes richer metadata: request path, method, client IP, HTTP version, etc.
+
+### Fixed
+- Swagger/OpenAPI sometimes showed inconsistent error schemas when `data` was missing.
+- **File structure cleanup**: imports in `__init__.py` were fixed and simplified.  
+  The package is now easier to import and fully modular.
+- Fixed a type issue where `error_code` was not properly annotated as `BaseExceptionCode`.
+
+---
+
 ## [0.1.21] - 2025-08-18
 ✅ Stable release!
 ✅ **Initial stable and suggested version**

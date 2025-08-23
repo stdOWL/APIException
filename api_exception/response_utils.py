@@ -1,7 +1,19 @@
-from typing import Dict
+from typing import Dict, Tuple, TypeGuard, Union
 from api_exception.response_model import ResponseModel
 from api_exception.enums import ExceptionStatus, BaseExceptionCode
 from api_exception.rfc7807_model import RFC7807ResponseModel
+
+Item2 = Tuple[int, BaseExceptionCode]
+Item4 = Tuple[int, BaseExceptionCode, str, str]
+Item = Union[Item2, Item4]
+
+
+def _is_item2(item: Item) -> TypeGuard[Item2]:
+    return len(item) == 2
+
+
+def _is_item4(item: Item) -> TypeGuard[Item4]:
+    return len(item) == 4
 
 
 class APIResponse:
@@ -39,16 +51,8 @@ class APIResponse:
             500: ("INT-500", "Internal Server Error", "An unexpected error occurred on the server.")
         }
 
-        responses = {}
+        responses: Dict[int, dict] = {}
         for code, (err_code, msg, desc) in examples.items():
-            example = ResponseModel(
-                data=None,
-                status=ExceptionStatus.FAIL,
-                message=msg,
-                description=desc,
-                error_code=err_code
-            ).model_dump()
-
             responses[code] = {
                 "model": ResponseModel,
                 "description": msg,
@@ -100,12 +104,12 @@ class APIResponse:
             raise ValueError("At least one (status_code, exception_code) pair must be provided.")
         if not all(isinstance(item, tuple) and len(item) == 2 for item in items):
             raise ValueError("Each item must be a tuple of (status_code, exception_code).")
-        if not all(isinstance(item[1], BaseExceptionCode) for item in items):
-            raise ValueError("Each exception_code must be an instance of BaseExceptionCode or its subclass.")
         if not all(isinstance(item[0], int) for item in items):
             raise ValueError("Each status_code must be an integer.")
+        if not all(isinstance(item[1], BaseExceptionCode) for item in items):
+            raise ValueError("Each exception_code must be an instance of BaseExceptionCode or its subclass.")
 
-        responses = {}
+        responses: Dict[int, dict] = {}
         for status_code, exception_code in items:
             example = ResponseModel(
                 data=None,
@@ -158,14 +162,27 @@ class APIResponse:
         if not items:
             raise ValueError("At least one (status_code, exception_code) pair must be provided.")
         if not all(isinstance(item, tuple) and (len(item) == 2 or len(item) == 4) for item in items):
-            raise ValueError("Each item must be a tuple of (status_code, exception_code).")
-        if not all(isinstance(item[1], BaseExceptionCode) for item in items):
-            raise ValueError("Each exception_code must be an instance of BaseExceptionCode or its subclass.")
-        if not all(isinstance(item[0], int) for item in items):
-            raise ValueError("Each status_code must be an integer.")
+            raise ValueError(
+                "Each item must be a tuple of (status_code, exception_code) or "
+                "(status_code, exception_code, type, instance)."
+            )
 
-        responses = {}
-        for status_code, exception_code, error_type, error_instance in items:
+        responses: Dict[int, dict] = {}
+        for item in items:
+            if _is_item2(item):
+                status_code, exception_code = item
+                error_type = exception_code.rfc7807_type
+                error_instance = exception_code.rfc7807_instance
+            elif _is_item4(item):
+                status_code, exception_code, error_type, error_instance = item
+            else:
+                raise ValueError("Invalid item arity.")
+
+            if not isinstance(status_code, int):
+                raise ValueError("Each status_code must be an integer.")
+            if not isinstance(exception_code, BaseExceptionCode):
+                raise ValueError("Each exception_code must be an instance of BaseExceptionCode or its subclass.")
+
             example = RFC7807ResponseModel(
                 instance=error_instance,
                 type=error_type,
@@ -182,4 +199,5 @@ class APIResponse:
                     }
                 }
             }
+
         return responses

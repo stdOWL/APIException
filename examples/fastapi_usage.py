@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Path
+from typing import Optional, Dict, Any
+
+from fastapi import FastAPI, Path, Header, Request
 from pydantic import BaseModel, Field
 from api_exception import (
     APIException,
@@ -7,10 +9,36 @@ from api_exception import (
     ResponseModel,
     register_exception_handlers,
     APIResponse,
+    ResponseFormat,
+    logger
 )
 
+logger.setLevel("DEBUG")
 app = FastAPI()
-register_exception_handlers(app)
+
+
+def my_extra_fields(request: Request, exc: Optional[BaseException]) -> Dict[str, Any]:
+    # Örn. özel header'ı maskeyle logla
+    user_id = request.headers.get("x-user-id", "anonymous")
+    return {
+        "masked_user_id": f"user-{user_id[-2:]}",
+        "service": "billing-service",
+        "has_exc": exc is not None,
+        "exc_type": type(exc).__name__ if exc else None,
+    }
+
+
+register_exception_handlers(app,
+                            response_format=ResponseFormat.RESPONSE_MODEL,
+                            log_traceback=True,
+                            log_traceback_unhandled_exception=False,
+                            log_level=10,
+                            log=True,
+                            response_headers=("x-user-id",),
+                            log_request_context=True,
+                            log_header_keys=("x-user-id",),
+                            extra_log_fields=my_extra_fields
+                            )
 
 '''
 Custom Exception Class that you can define in your code to make backend error responses standardized and predictable.
@@ -45,6 +73,7 @@ class UserResponse(BaseModel):
 class ApiKeyModel(BaseModel):
     api_key: str = Field(..., example="b2013852-1798-45fc-9bff-4b6916290f5b", description="Api Key.")
 
+
 @app.get(
     "/user/{user_id}",
     response_model=ResponseModel[UserResponse],
@@ -60,7 +89,8 @@ Examples:
 - Get user with ID 7: `/user/7` - Returns a valid user response.
 '''
 )
-async def get_user(user_id: int = Path(..., description="The ID of the user")):
+async def get_user(x_user_id: str = Header(default=None),
+                   user_id: int = Path(..., description="The ID of the user")):
     if user_id == 1:
         raise APIException(
             error_code=CustomExceptionCode.USER_NOT_FOUND,
@@ -81,7 +111,6 @@ async def get_user(user_id: int = Path(..., description="The ID of the user")):
     data = UserResponse(id=user_id, username="John Doe")
     return ResponseModel(data=data,
                          description="User fetched successfully.")
-
 
 
 @app.get(
@@ -132,4 +161,5 @@ async def user_basic():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

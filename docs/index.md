@@ -45,6 +45,10 @@ register_exception_handlers(app=app)
 That’s it — copy, paste, and you’re good to go. So easy, isn't it? 
 
 
+!!! tip "Pro tip"
+    👉 For advanced configuration, see [**register_exception_handlers reference**](usage/register_exception_handlers.md)
+
+
 Now all your endpoints will return consistent `success` and `error` responses, and your Swagger docs will be beautifully documented.
 Exception handling will be logged, and unexpected errors will return a clear JSON response instead of FastAPI’s default HTML error page.
 
@@ -164,7 +168,7 @@ In both cases, the response structure is **consistent**.
 
 - In the example above, when the `user_id` is `1`, it raises an `APIException` with a custom `error_code`, the response is formatted according to the `ResponseModel` and it's logged **automatically** as shown below:
 
-![apiexception-indexApiExceptionLog.png](assets/apiexception-indexApiExceptionLog.png)
+![apiexception-indexApiExceptionLog.png](advanced/exception_1.png)
 
 
 #### - Uncaught Exception API Response?
@@ -183,7 +187,7 @@ What if you forget to handle an exception such as in the [**example**](#see-it-i
 }
 ```
 
-![apiexception-indexApiExceptionLog.png](assets/apiexception-indexZeroDivisionLog.png)
+![apiexception-indexApiExceptionLog.png](advanced/exception_2.png)
 
 ### 💡 Clear & Consistent Responses
 - 🟢 **200**: Success responses are always documented with your data model.
@@ -242,6 +246,12 @@ if (body.status === "SUCCESS") {
 - Toggle tracebacks on/off depending on the environment.
 - Fully controllable logging: import, set log levels, or disable entirely.
 - **RFC 7808** support out of the box for teams that require standard-compliant error formats.
+
+
+!!! tip "Pro Tip: Master Your Logs"
+    For advanced logging configuration and real-world examples, check out the  
+    [**Logging & Debug Guide**](advanced/logging.md).  
+    Learn how to add file handlers, mask sensitive data, and keep production logs clean & actionable.
 
 ---
 Reduces boilerplate and speeds up integration.

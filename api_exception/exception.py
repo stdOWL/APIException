@@ -1,20 +1,31 @@
-import json
+from __future__ import annotations
+
 import traceback
-from typing import Union
+from typing import Optional, Dict, Union, Any
 
-from api_exception.rfc7807_model import RFC7807ResponseModel
-from .logger import logger
-from api_exception.enums import ExceptionCode, ExceptionStatus
-from api_exception.response_model import ResponseModel
+from .rfc7807_model import RFC7807ResponseModel
+from .enums import BaseExceptionCode, ExceptionStatus
+from .response_model import ResponseModel
 
-GLOBAL_LOG: bool = True
+# Default HTTP status codes mapped by status
+DEFAULT_HTTP_CODES = {
+    ExceptionStatus.SUCCESS: 200,
+    ExceptionStatus.WARNING: 400,
+    ExceptionStatus.FAIL: 400,
+}
 
 
-def set_global_log(should_log: bool) -> None:
-    """Enable/disable all library logging globally."""
-    global GLOBAL_LOG
-    GLOBAL_LOG = bool(should_log)
+def set_default_http_codes(new_map: dict):
+    """
+    Override the default HTTP status mapping per ExceptionStatus.
 
+    Example
+    -------
+    >>> from api_exception.enums import ExceptionStatus
+    >>> from api_exception.exception import set_default_http_codes
+    >>> set_default_http_codes({ExceptionStatus.WARNING: 422})
+    """
+    DEFAULT_HTTP_CODES.update(new_map)
 
 
 class APIException(Exception):
@@ -23,8 +34,8 @@ class APIException(Exception):
 
     Attributes:
     -----------
-    - error_code : ExceptionCode
-        An instance of ExceptionCode, representing the error type.
+    - error_code : BaseExceptionCode
+        An instance of BaseExceptionCode, representing the error type.
     - http_status_code : int
         HTTP status code for the exception, defaults to 400 if not specified.
     - status : ExceptionStatus
@@ -33,27 +44,36 @@ class APIException(Exception):
         Message to be displayed for the exception, defaults to the message from error_code.
     - description : str
         Detailed description of the exception, defaults to the description from error_code.
+    - log_exception : bool
+        Hint for the handler whether to log this exception. Default True.
+    - log_message : str | dict | None
+        Extra context to appear in logs (structured). Not logged here; the handler will process it.
+    - headers : dict[str, str] | None
+        Optional HTTP headers to be merged into the response.
     """
 
     def __init__(self,
-                 error_code: ExceptionCode,
+                 error_code: BaseExceptionCode,
                  http_status_code: int = 400,
                  status: ExceptionStatus = ExceptionStatus.FAIL,
-                 message: str = None,
-                 description: str = None,
+                 message: Optional[str] = None,
+                 description: Optional[str] = None,
                  log_exception: bool = True,
-                 log_message: Union[str | dict] = None):
+                 log_message: Optional[Union[str, Dict[str, Any]]] = None,
+                 headers: Optional[Dict[str, str]] = None,
+                 ):
         """
         Initializes an APIException with a specific error code, HTTP status, and optional message and description.
+        Standardized exception for API layers.
 
         Parameters:
         -----------
         - error_code : ExceptionCode
-            The error code enum instance defining error type, message, and description.
+            Concrete enum value that provides .error_code, .message, .description, rfc7807 fields.
         - http_status_code : int, optional
             HTTP status code for the response, defaults to 400 if not specified.
         - status : ExceptionStatus, optional
-            Status of the exception, defaults to ExceptionStatus.FAIL.
+            Defaults to ExceptionStatus.FAIL. Logical status used by the response model (SUCCESS/WARNING/FAIL).
         - message : str, optional
             Optional custom message for the exception. Defaults to the message from error_code if None.
         - description : str, optional
@@ -63,41 +83,21 @@ class APIException(Exception):
         - log_message : str, optional
             Optional custom log message. If provided, it will be logged along with the exception details.
             Defaults to None, meaning no additional log message will be added.
+        - headers : dict[str, str] | None
+        Optional HTTP headers to be merged into the response.
 
         """
         # Use provided message or default to the message from the error code
-        self.message = message if message else error_code.message
-        self.error_code = error_code.error_code
-        self.description = description if description else error_code.description
-        self.status = status
-        self.http_status_code = http_status_code or DEFAULT_HTTP_CODES.get(status, 400)
-        self.log_exception = log_exception
-        self.log_message = log_message                  # If you want to add more log message. It can be dict or str.
-        self.rfc7807_type = error_code.rfc7807_type
-        self.rfc7807_instance = error_code.rfc7807_instance
-
-        if GLOBAL_LOG and self.log_exception:
-            # Log the exception details
-            self.__log__()
-
-
-    def __log__(self) -> None:
-        """
-        Logs the exception details with file and line number where the exception was raised.
-        """
-        frame = traceback.extract_stack()[-3]  # Capture the frame where the exception is raised
-        logger.error(f"Exception Raised in {frame.filename}, line {frame.lineno}")
-        logger.error(
-            f"Code: {self.error_code}, Status: {self.status}, Message: {self.message}, Description: {self.description}")
-
-        if self.log_message is not None:
-            if isinstance(self.log_message, str):
-                logger.error(f"Log Message: {self.log_message}")
-            elif isinstance(self.log_message, dict):
-                logger.error(f"Log Message: {json.dumps(self.log_message)}")
-
-
-
+        self.message: str = message if message is not None else error_code.message
+        self.error_code: str = error_code.error_code
+        self.description: str = description if description is not None else error_code.description
+        self.status: ExceptionStatus = status
+        self.http_status_code: int = http_status_code or DEFAULT_HTTP_CODES.get(status, 400)
+        self.log_exception: bool = log_exception
+        self.log_message: Optional[Union[str, Dict[str, Any]]] = log_message
+        self.rfc7807_type: str = error_code.rfc7807_type
+        self.rfc7807_instance: str = error_code.rfc7807_instance
+        self.headers: Dict[str, str] = headers or {}
 
 
     def to_response(self) -> dict:
@@ -152,20 +152,5 @@ class APIException(Exception):
             description=self.description
         )
 
-    def __str__(self):
+    def __str__(self) -> str:  # pragma: no cover - representation
         return f"[{self.error_code}] {self.message} (Status: {self.status}, Description: {self.description})"
-
-
-# Default HTTP status codes mapped by status
-DEFAULT_HTTP_CODES = {
-    ExceptionStatus.SUCCESS: 200,
-    ExceptionStatus.WARNING: 400,
-    ExceptionStatus.FAIL: 400,
-}
-
-
-def set_default_http_codes(new_map: dict):
-    """
-    Allows overriding the default HTTP status codes.
-    """
-    DEFAULT_HTTP_CODES.update(new_map)

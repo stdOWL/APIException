@@ -10,7 +10,10 @@
 [![Downloads](https://pepy.tech/badge/apiexception)](https://pepy.tech/project/apiexception)
 [![Python Versions](https://img.shields.io/pypi/pyversions/apiexception.svg)](https://pypi.org/project/apiexception/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/badge/linting-ruff-%23ea580c?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/badge/packaging-uv-%234285F4?logo=python&logoColor=white)](https://github.com/astral-sh/uv)
+[![Poetry](https://img.shields.io/badge/dependencies-poetry-%2360A5FA?logo=poetry&logoColor=white)](https://python-poetry.org/)
+
 
 **APIException** is a robust, production-ready Python library for FastAPI that simplifies exception handling and ensures consistent, well-structured API responses. Designed for developers who want to eliminate boilerplate error handling and improve Swagger/OpenAPI documentation, APIException makes your FastAPI projects cleaner and easier to maintain.
 
@@ -27,6 +30,21 @@
 · [**Full Documentation**](https://akutayural.github.io/APIException/)
 
 Reading the [full documentation](https://akutayural.github.io/APIException/) is **highly recommended** — it’s clear, thorough, and helps you get started in minutes.
+
+---
+
+!!! important "New in v0.2.0"
+    APIException **v0.2.0** introduces major improvements:  
+    - Advanced structured logging (`log_level`, `log_header_keys`, `extra_log_fields`)  
+    - Response headers echo (`response_headers`)  
+    - Type-safety improvements with `mypy`  
+    - APIException accepts `headers` param <br>
+    - Cleaner import/export structure <br>
+    - 📢 Featured in [**Python Weekly #710**](https://www.pythonweekly.com/p/python-weekly-issue-710-august-14-2025-3200567a10d37d87) 🎉
+
+
+    👉 For full details and usage examples, see  
+    [**register_exception_handlers reference**](https://akutayural.github.io/APIException/usage/register_exception_handlers/)
 
 ---
 
@@ -59,22 +77,44 @@ logger.setLevel("INFO")  # Set logging level if needed
  ## 🔍 Example: Error Handling with Custom Codes
 
 ```python
-from typing import List
-from fastapi import FastAPI, Path
+from typing import List, Optional, Any, Dict
+from fastapi import FastAPI, Path, Request
 from pydantic import BaseModel, Field
 from api_exception import (
     APIException,
     BaseExceptionCode,
     ResponseModel,
     register_exception_handlers,
-    APIResponse
+    APIResponse,
+    logger,
+    ResponseFormat
 )
 
+logger.setLevel("DEBUG")
 app = FastAPI()
 
-# Register exception handlers globally to have the consistent
-# error handling and response structure
-register_exception_handlers(app=app)
+
+def my_extra_fields(request: Request, exc: Optional[BaseException]) -> Dict[str, Any]:
+    user_id = request.headers.get("x-user-id", "anonymous")
+    return {
+        "masked_user_id": f"user-{user_id[-2:]}",
+        "service": "billing-service",
+        "has_exc": exc is not None,
+        "exc_type": type(exc).__name__ if exc else None,
+    }
+
+
+register_exception_handlers(app,
+                            response_format=ResponseFormat.RESPONSE_MODEL,
+                            log_traceback=True,
+                            log_traceback_unhandled_exception=False,
+                            log_level=10,
+                            log=True,
+                            response_headers=("x-user-id",),
+                            log_request_context=True,
+                            log_header_keys=("x-user-id",),
+                            extra_log_fields=my_extra_fields
+                            )
 
 
 # Define your custom exception codes extending BaseExceptionCode
@@ -178,7 +218,7 @@ In both `error` and the `success` cases, the response structure is **consistent*
 
 - In the example above, when the `user_id` is `1`, it raises an `APIException` with a custom `error_code`, the response is formatted according to the `ResponseModel` and it's logged **automatically** as shown below:
 
-![apiexception-indexApiExceptionLog.png](docs/assets/apiexception-indexApiExceptionLog.png)
+![apiexception-indexApiExceptionLog.png](docs/advanced/exception_1.png)
 
 ---
 
@@ -198,7 +238,7 @@ What if you forget to handle an exception such as in the **example** above?
 }
 ```
 
-![apiexception-indexApiExceptionLog.png](docs/assets/apiexception-indexZeroDivisionLog.png)
+![apiexception-indexApiExceptionLog.png](docs/advanced/exception_2.png)
 
 
 **2️⃣ Raise an Exception**
@@ -410,155 +450,9 @@ Benchmark scripts and raw Locust reports are available in the [benchmark](https:
 
 ## 📜 Changelog
 
-##v0.1.21 - 2025-08-18**
-✅ **Initial stable and suggested version**
+Currently, the most stable and suggested version is v0.2.0
 
-
-### Fixed
-- Added missing `import traceback` in `__init__.py`.  
-  This resolves a `NameError` when using `register_exception_handlers` with traceback logging enabled.
-
-
-**v0.1.20 - 2025-08-18**
-
-#### Changed
-- Restructured `__init__.py` to use **relative imports** (`from .module import ...`) instead of absolute imports for cleaner packaging and IDE compatibility.
-- Unified all public exports under `__all__` so that consumers can simply `from api_exception import ...` without needing sub-module paths.
-
-#### Fixed
-- Resolved IDE/PyCharm highlighting issues where imports appeared red even though they worked at runtime.
-- Improved import resolution when using the package in external projects by flattening top-level exports.
-
-**v0.1.19 - 2025-08-18**
-
-#### Added
-- Unified import interface: all core classes and functions can now be imported directly from `api_exception` (e.g. `from api_exception import ResponseModel, APIException`).
-- Cleaner `__init__.py` exports with `__all__`.
-
-#### Changed
-- Internal imports refactored, simplified folder structure for `enums.py`, `response_model.py`, `rfc7807_model.py`.
-
-#### Fixed
-- Example and README imports updated to use new unified style.
-
-
-**v0.1.18 - 2025-08-17**
-
-#### Added
-- Global logging control (`set_global_log`) with `log` param in `register_exception_handlers`.
-- RFC7807 full support with `application/problem+json` responses.
-- Automatic injection of `data: null` in OpenAPI error examples.
-
-#### Changed
-- Dependency pins relaxed (`>=` instead of strict `==`).
-- Docstrings and examples updated (`use_response_model` → `response_format`).
-- Unified error logging (no logs when `log=False`).
-
-#### Fixed
-- Fallback middleware now returns HTTP 500 instead of 422 for unexpected errors.
-- Traceback scope bug fixed in handlers.
-
-**v0.1.17 (2025-08-10)**
-
-- `RFC 7807` standard support for consistent error responses (`application/problem+json`)
-
-- OpenAPI (Swagger) schema consistency: nullable fields are now explicitly shown for better compatibility
-
-- `Poetry` support has been added for dependency management
-
-- `uv` support has been added.
-
-- extra logger message param has been added to `APIException` for more detailed logging
-
-- `log_traceback` and `log_traceback_unhandled_exception` parameters have been added to `register_exception_handlers()` for more control over logging behavior
-
-- `log_exception` parameter has been added to `APIException` for more control over logging behavior
-
-- `log_message` parameter has been added to `APIException` for more control over logging behavior
-
-- Logging now uses `add_file_handler()` to write logs to a file
-
-- Logging improvements: now includes exception arguments in logs for better debugging
-
-- Documentation has been updated.    
-
-- Readme.md has been updated. 
-
-**v0.1.16 (2025-07-22)**
-
-- setup.py has been updated.
-
-- Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with `PEP 625`.
-
-- Documentation has been updated. 
-
-- Readme.md has been updated. 
-
-**v0.1.15 (2025-07-22)**
-
-- setup.py has been updated.
-
-- Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with `PEP 625`.
-
-- Documentation has been updated. 
-
-- Readme.md has been updated. 
-
-
-**v0.1.14 (2025-07-22)**
-
-- setup.py has been updated.
-
-- Project name has been updated. Instead of `APIException` we will use `apiexception` to comply with PEP 625.
-
-**v0.1.13 (2025-07-21)**
-
-- /examples/fastapi_usage.py has been updated.
-
-- 422 Pydantic error has been fixed in APIResponse.default()
-
-- Documentation has been updated.
-
-- Exception Args has been added to the logs.
-
-- Readme has been updated. New gifs have been added.
-
-
-**v0.1.12 (2025-07-14)**
-
-- /examples/fastapi_usage.py has been updated.
-
-- 422 Pydantic error has been handled in register_handler
-
-- Documentation has been added.
-
-- `use_fallback_middleware` has been added.
-
-**v0.1.11 (2025-07-13)**
-
-- Added CLI entrypoint (api_exception-info)
-
-- Stable test suite with FastAPI TestClient
-
-- Multiple app support
-
-- Raw dict or Pydantic output
-
-- Automatic logging improvements
-
-
-**v0.1.0 (2025-06-25)**
-
-
-🚀 Prototype started!
-
-- Project scaffolding
-
-- `ResponseModel` has been added
-
-- `APIException` has been added
-
-- Defined base ideas for standardizing error handling
+👉 [See full changelog](https://akutayural.github.io/APIException/changelog/)
 
 ---
 
@@ -582,3 +476,12 @@ https://pypi.org/project/apiexception/
 
 💻 **Author Website**  
 https://ahmetkutayural.dev
+
+---
+
+## 🌍 Community & Recognition
+
+- 📢 Featured in [**Python Weekly #710**](https://www.pythonweekly.com/p/python-weekly-issue-710-august-14-2025-3200567a10d37d87) 🎉  
+- 🔥 Ranked **#3** globally in [r/FastAPI](https://www.reddit.com/r/FastAPI/comments/1ma39rq/make_your_fastapi_responses_clean_consistent/) under the *pip package* flair.  
+- ⭐ Gaining traction on GitHub with developers adopting it for real-world FastAPI projects.  
+- 💬 Actively discussed and shared across the Python community.
