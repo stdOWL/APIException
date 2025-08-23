@@ -33,22 +33,18 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
 
 ---
 
-<table>
-  <tr>
-    <td>
-      <strong>🆕 What’s new in v0.2.0</strong>
-      <ul>
-        <li>Advanced structured logging (<code>log_level</code>, <code>log_header_keys</code>, <code>extra_log_fields</code>)</li>
-        <li>Response headers echo (<code>response_headers</code>)</li>
-        <li>Type-safety improvements with <strong>mypy</strong></li>
-        <li><code>APIException</code> now accepts <code>headers</code> param</li>
-        <li>Cleaner import/export structure</li>
-        <li>📰 Featured in <strong>Python Weekly #710</strong></li>
-      </ul>
-      <p>👉 For full details &amp; examples: <a href="https://akutayural.github.io/APIException/usage/register_exception_handlers/"><strong>register_exception_handlers reference</strong></a></p>
-    </td>
-  </tr>
-</table>
+> [!IMPORTANT]
+    New in v0.2.0: <br>
+    - Advanced structured logging (`log_level`, `log_header_keys`, `extra_log_fields`)  
+    - Response headers echo (`response_headers`)  
+    - Type-safety improvements with `mypy`  
+    - APIException accepts `headers` param <br>
+    - Cleaner import/export structure <br>
+    - 📢 Featured in [**Python Weekly #710**](https://www.pythonweekly.com/p/python-weekly-issue-710-august-14-2025-3200567a10d37d87) 🎉
+
+
+    👉 For full details and usage examples, see  
+    [**register_exception_handlers reference**](https://akutayural.github.io/APIException/usage/register_exception_handlers/)
 
 ---
 
