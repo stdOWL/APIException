@@ -40,10 +40,8 @@ Reading the [full documentation](https://akutayural.github.io/APIException/) is 
     - Type-safety improvements with `mypy`  
     - APIException accepts `headers` param <br>
     - Cleaner import/export structure <br>
-    - 📢 Featured in [**Python Weekly #710**](https://www.pythonweekly.com/p/python-weekly-issue-710-august-14-2025-3200567a10d37d87) 🎉
-
-
-    👉 For full details and usage examples, see  
+    - 📢 Featured in [**Python Weekly #710**](https://www.pythonweekly.com/p/python-weekly-issue-710-august-14-2025-3200567a10d37d87) 🎉<br>
+    - 👉 For full details and usage examples, see  
     [**register_exception_handlers reference**](https://akutayural.github.io/APIException/usage/register_exception_handlers/)
 
 ---
